@@ -11,6 +11,15 @@ app.set('port',(process.env.PORT || 5000));
 app.use(cors());
 app.use(bodyParser.json());
 
+require('dotenv').config();
+const url = process.env.MONGODB_URI;
+const MongoClient = require('mongodb').MongoClient; 
+const client = new MongoClient(url);
+client.connect();
+
+var api = require("./api");
+api.setApp( app, client);
+
 app.use((req, res, next) =>
 {
     res.setHeader('Acess-Control-Allow-Origin', '*');
