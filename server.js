@@ -11,11 +11,14 @@ app.set('port',(process.env.PORT || 5000));
 app.use(cors());
 app.use(bodyParser.json());
 
-require('dotenv').config();
+// require('dotenv').config();
 const url = process.env.MONGODB_URI;
 const MongoClient = require('mongodb').MongoClient; 
 const client = new MongoClient(url);
 client.connect();
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 var api = require("./api");
 api.setApp( app, client);
