@@ -62,13 +62,13 @@ exports.setApp = function( app, client)
                     Hello!
                     Thank you for signing up for LetsBuckit! 
                     Please copy and paste the following link in your browser to verify your account:
-                    http://${req.headers.host}/verify-email?token=${newUser.emailTok} 
+                    http://${req.headers.host}/api/verify-email?token=${newUser.emailTok} 
                 `,
                 html: `
                     <h2>Hello!</h2>
                     <p>Thank you for signing up for LetsBuckit!</p>
                     <p>Please click the link below to verify your account:</p>
-                    <a href="http://${req.headers.host}/verify-email?token=${newUser.emailTok}">Verify Your Account</a>
+                    <a href="http://${req.headers.host}/api/verify-email?token=${newUser.emailTok}">Verify Your Account</a>
                 `
             }
             try      
@@ -113,7 +113,9 @@ exports.setApp = function( app, client)
             var newVal = { $set :{emailTok:null, isVerified:true}};
             if (results.length == 0)
             {
-                req.flash('error!');
+                var ret = { error: "No User Found" };      
+                res.status(204).json(ret);
+                // req.flash('error!');
                 return res.redirect('/');
             }
             results[0].emailTok = null;
