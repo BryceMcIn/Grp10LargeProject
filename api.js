@@ -1,3 +1,4 @@
+const { title } = require('process');
 
 
 exports.setApp = function( app, client)
@@ -175,20 +176,21 @@ exports.setApp = function( app, client)
     //Accept/Decline Friend Request
     app.post('/api/fr_response', async (req, res, next) =>    
     {
-        const { userID, friendID, status } = req.body;      
+        const { userID, friendID } = req.body;      
         const newFriend = {userID:userID,friendID:friendID};
         var error = '';
-        const db = client.db();  
-        const results = await db.collection('Request').find({senderID:userID,recieverID:friendID}).toArray();
-        const results1 = await db.collection('Request').find({senderID:friendID,recieverID:userID}).toArray();
-        if( results.length > 0 )
-        {
+            const db = client.db();  
+            const results = await db.collection('Request').find({senderID:userID,recieverID:friendID}).toArray();
+            const results1 = await db.collection('Request').find({senderID:friendID,recieverID:userID}).toArray();
+            if( results.length > 0 )
+            {
             const removePending = {senderID:userID,recieverID:friendID}; 
             try      
             {        
-                const db = client.db();        
-                const result = db.collection('Friends').insertOne(newFriend);
-                const result1 = db.collection('Request').remove(removePending);      
+                    const db = client.db();        
+                    const result = db.collection('Friends').insertOne(newFriend);
+                    const result1 = db.collection('Request').remove(removePending);  
+                    
             }      
             catch(e)      
             {        
@@ -224,7 +226,7 @@ exports.setApp = function( app, client)
     //Remove a friend
     app.post('/api/fr_remove', async (req, res, next) => 
     {  
-        // incoming: login, password  // outgoing: id, firstName, lastName, error 
+        // incoming: userId, friendId  // outgoing: error 
         var error = '';  
         const { userId, friendId } = req.body;  
         const FRemove = {userId:userId,friendId:friendId};
@@ -258,7 +260,7 @@ exports.setApp = function( app, client)
     //Show all friends for user
     app.post('/api/fr_allfriends', async (req, res, next) => 
     {  
-        // incoming: login, password  // outgoing: id, firstName, lastName, error 
+        // incoming: userId // outgoing: list of ids, error 
         var error = '';
         var x = 0;
         var i;
@@ -266,9 +268,7 @@ exports.setApp = function( app, client)
         const db = client.db();  
         const results = await db.collection('Friends').find({userID:userID}).toArray();
         const results1 = await db.collection('Friends').find({friendID:userID}).toArray();
-        var _ret = [];
-        var _ret1 = [];
-        var id;  
+        var _ret = [];  
         if( results.length > 0 )  
         {    
             for (i =0; i<results.length;i++)
@@ -296,5 +296,99 @@ exports.setApp = function( app, client)
         var ret = {results:_ret, error:error};  
         res.status(200).json(ret);
     }
+    });
+
+     //Add a bucket list item
+     app.post('/api/add_bucket', async (req, res, next) =>    
+     {      // incoming: sender Id, reciever Id      // outgoing: error/no error     
+         const { userID, itemTitle, caption } = req.body;      
+         const newbucket = {userID:userID,itemTitle:itemTitle,caption:caption,completed:false};      
+         var error = '';
+             try      
+             {        
+                 const db = client.db();        
+                 const result = db.collection('Bucket').insertOne(newbucket);      
+             }      
+             catch(e)      
+             {        
+                 error = e.toString();      
+             }         
+             var ret = { error: error };      
+             res.status(200).json(ret);
+     });
+
+     //Show all a users bucket list items
+     app.post('/api/all_buckets', async (req, res, next) => 
+    {  
+        // incoming: userId // outgoing: list of all bucket list items, error 
+        var error = '';
+        var x = 0;
+        var i;
+        const { userID } = req.body;  
+        const db = client.db();  
+        const results = await db.collection('Bucket').find({userID:userID}).toArray();
+        var _ret = [];
+        var _ret1 = [];
+        if( results.length > 0 )  
+        {    
+            for (i =0; i<results.length;i++)
+            {
+                _ret.push(results[i]._id,results[i].itemTitle,results[i].caption,results[i].completed);
+                x++;
+            }
+        }
+    if (x == 0)
+    {
+        error = "No bucket list items found"
+            var ret = { error: error };      
+            res.status(500).json(ret);
+    }
+    else
+    {
+        var ret = {results:_ret, error:error};  
+        res.status(200).json(ret);
+    }
+    });
+
+    //delete bucket list item
+    app.post('/api/delete_bucket', async (req, res, next) =>    
+     {      // incoming: id of bucket      // outgoing: error/no error   
+         ObjectId = require('mongodb').ObjectID;
+         const { ID } = req.body;           
+         var error = '';
+         const db = client.db();  
+         const results = await db.collection('Bucket').find({_id: new ObjectId(ID)}).toArray();
+         user = results[0].userID;
+         item = results[0].itemTitle;
+          cap = results[0].caption;
+          complete = results[0].completed
+          const deletebucket = {_id: new ObjectId(ID),userID:user,itemTitle:item,caption:cap,completed:complete};
+          try      
+            {        
+                const db = client.db();        
+                const result = db.collection('Bucket').remove(deletebucket);      
+            }      
+          catch(e)      
+            {        
+                error = e.toString();      
+            }         
+          var ret = { error: error };      
+          res.status(200).json(ret);
+     });
+     
+     //edit a bucket list item / mark as complete
+     app.post('/api/edit_bucket', async (req, res, next) =>    
+     { 
+     ObjectId = require('mongodb').ObjectID;
+     const { ID, itemTitle, caption, completed} = req.body;
+     var error = '';
+
+     var myquery = { _id: new ObjectId(ID)};
+     const db = client.db();  
+     var newvalues = { $set: {itemTitle: itemTitle, caption: caption, completed:completed } };
+     db.collection('Bucket').updateOne(myquery, newvalues);
+
+    var ret = { error: error };      
+    res.status(200).json(ret);
     });
 }
