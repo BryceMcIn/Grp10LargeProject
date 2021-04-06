@@ -24,9 +24,14 @@ exports.setApp = function( app, client)
             em = results[0].email;
             ver = results[0].isVerified;
             emTok = results[0].emailTok
-        }  
-        var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
-        res.status(200).json(ret);
+            var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
+            res.status(200).json(ret);
+        }
+        else 
+        {
+            var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
+            res.status(204).json(ret);
+        }   
     });
     const sgMail = require('@sendgrid/mail')
     sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -128,5 +133,125 @@ exports.setApp = function( app, client)
 
         var ret = { error: err };      
         res.status(200).json(ret);
+    });
+
+    //Send a Friend Request
+    app.post('/api/fr_request', async (req, res, next) =>    
+    {      // incoming: sender Id, reciever Id      // outgoing: error/no error     
+        const { senderID, recieverID } = req.body;      
+        const newFR = {senderID:senderID,recieverID:recieverID};      
+        var error = '';
+        const db = client.db();  
+        const results = await db.collection('Request').find({senderID:senderID,recieverID:recieverID}).toArray();
+        const results1 = await db.collection('Request').find({senderID:recieverID,recieverID:senderID}).toArray();
+        if( results.length > 0 )  
+        { 
+            error = "There is an existing friend request or friendship already."
+            var ret = { error: error };      
+            res.status(500).json(ret);
+        }
+        else if( results1.length > 0 )  
+        { 
+            error = "There is an existing friend request or friendship already."
+            var ret = { error: error };      
+            res.status(500).json(ret);
+        }
+        else
+        {
+            try      
+            {        
+                const db = client.db();        
+                const result = db.collection('Request').insertOne(newFR);      
+            }      
+            catch(e)      
+            {        
+                error = e.toString();      
+            }         
+            var ret = { error: error };      
+            res.status(200).json(ret);
+        }
+    });
+
+    //Accept/Decline Friend Request
+    app.post('/api/fr_response', async (req, res, next) =>    
+    {
+        const { userID, friendID, status } = req.body;      
+        const newFriend = {userID:userID,friendID:friendID};
+        var error = '';
+        const db = client.db();  
+        const results = await db.collection('Request').find({senderID:userID,recieverID:friendID}).toArray();
+        const results1 = await db.collection('Request').find({senderID:friendID,recieverID:userID}).toArray();
+        if( results.length > 0 )
+        {
+            const removePending = {senderID:userID,recieverID:friendID}; 
+            try      
+            {        
+                const db = client.db();        
+                const result = db.collection('Friends').insertOne(newFriend);
+                const result1 = db.collection('Request').remove(removePending);      
+            }      
+            catch(e)      
+            {        
+                error = e.toString();      
+            }         
+            var ret = { error: error };      
+            res.status(200).json(ret);
+        }
+        else if( results1.length > 0 )
+        {
+            const removePending1 = {senderID:friendID,recieverID:userID}; 
+            try      
+            {        
+                const db = client.db();        
+                const result = db.collection('Friends').insertOne(newFriend);
+                const result1 = db.collection('Request').remove(removePending1);
+            }      
+            catch(e)      
+            {        
+                error = e.toString();      
+            }         
+            var ret = { error: error };      
+            res.status(200).json(ret);
+        }
+        else
+        {
+            error = "No pending friend request found."
+            var ret = { error: error };      
+            res.status(500).json(ret);
+        }
+    });
+
+    //Remove a friend
+    app.post('/api/fr_remove', async (req, res, next) => 
+    {  
+        // incoming: login, password  // outgoing: id, firstName, lastName, error 
+        var error = '';  
+        const { userId, friendId } = req.body;  
+        const FRemove = {userId:userId,friendId:friendId};
+        const FRemove1 = {userId:friendId,friendId:userId};
+        const db = client.db();  
+        const results = await db.collection('Friends').find({userId:userId,friendId:friendId}).toArray();
+        const results1 = await db.collection('Friends').find({userId:friendId,friendId:userId}).toArray();
+
+        if( results.length > 0 )  
+        {    
+
+            const result = db.collection('Friends').remove(FRemove); 
+            var ret = { error: error };
+            res.status(200).json(ret);
+        }
+        else if( results1.length > 0 )  
+        {    
+
+            const result = db.collection('Friends').remove(FRemove1); 
+            var ret = { error: error };
+            res.status(200).json(ret);
+        }
+        else 
+        {
+            error = "No friend was found."
+            var ret = { error: error };      
+            res.status(500).json(ret);
+        }   
     });
 }
