@@ -254,4 +254,47 @@ exports.setApp = function( app, client)
             res.status(500).json(ret);
         }   
     });
+
+    //Show all friends for user
+    app.post('/api/fr_allfriends', async (req, res, next) => 
+    {  
+        // incoming: login, password  // outgoing: id, firstName, lastName, error 
+        var error = '';
+        var x = 0;
+        var i;
+        const { userID } = req.body;  
+        const db = client.db();  
+        const results = await db.collection('Friends').find({userID:userID}).toArray();
+        const results1 = await db.collection('Friends').find({friendID:userID}).toArray();
+        var _ret = [];
+        var _ret1 = [];
+        var id;  
+        if( results.length > 0 )  
+        {    
+            for (i =0; i<results.length;i++)
+            {
+                _ret.push(results[i].friendID);
+                x++;
+            }
+        }
+        if( results1.length > 0 )  
+        {
+            for (i =0; i<results1.length;i++)
+            {
+                _ret.push(results1[i].userID);
+                x++;
+            }
+        }
+    if (x == 0)
+    {
+        error = "No friends were found for this account"
+            var ret = { error: error };      
+            res.status(500).json(ret);
+    }
+    else
+    {
+        var ret = {results:_ret, error:error};  
+        res.status(200).json(ret);
+    }
+    });
 }
