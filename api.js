@@ -116,15 +116,20 @@ exports.setApp = function( app, client)
                 var ret = { error: "No User Found" };      
                 res.status(204).json(ret);
                 // req.flash('error!');
-                return res.redirect('/');
+                // return res.redirect('/');
             }
-            results[0].emailTok = null;
-            results[0].isVerified = true;
-            // await results[0].save();
-            db.collection('Users').updateOne(myQuery,newVal, function(err, res) {
-                if (err) throw err;
-                console.log("Collection Item Updated");
-            });
+            else 
+            {
+                results[0].emailTok = null;
+                results[0].isVerified = true;
+                // await results[0].save();
+                db.collection('Users').updateOne(myQuery,newVal, function(err, res) {
+                    if (err) throw err;
+                    console.log("Collection Item Updated");
+                });
+                var ret = { error: err };      
+                res.status(200).json(ret);
+            }
         }
         catch (error)
         {
@@ -132,10 +137,112 @@ exports.setApp = function( app, client)
             err = error.toString();
             var ret = {error : err}
             res.status(500).json(ret);
+        }   
+    });
+
+    app.post('/api/send-password-recovery' , async(req, res, next) =>{
+        var error = '';
+        const crypto = require('crypto');
+        try {
+            try {
+                const db = client.db();
+                const { login } = req.body;
+                const results = await db.collection('Users').find({login:req.body.login}).toArray(); 
+                if (results.length > 0)
+                {
+                    const tok = crypto.randomBytes(64).toString('hex')
+                    var myQuery = {login:login};
+                    var newVal = { $set :{passwordResetTok:tok}};
+                    db.collection('Users').updateOne(myQuery,newVal,function(err,res){
+                        if (err) throw err;
+                        console.log("Collection Item Updated");
+                    });
+                    const msg = 
+                    {
+                    from: 'letsbuckitgroup10@gmail.com',
+                    to: results[0].email,
+                    subject: 'LetsBuckit - Password Reset',
+                    text:` 
+                        Hello! 
+                        Copy and paste the following link in your browser to reset your password:
+                        http://${req.headers.host}/api/password-reset?token=${tok} 
+
+                        If you did not request this password reset link, please consider changing your password. 
+                    `,
+                    html: `
+                        <h2>Hello!</h2>
+                        <p>Click the link below to reset your password:</p>
+                        <a href="http://${req.headers.host}/api/password-reset?token=${tok}">Verify Your Account</a>
+                    
+                        <p>If you did not request this password reset link, please consider changing your password.</p>
+                        `
+                    }
+                    try {
+                        await sgMail.send(msg);
+                        console.log("Password Reset Email Sent");
+                        // res.redirect('/');
+                    } catch (er) {
+                        console.log(er);
+                        //req.flash('an error has occured');
+                        // req.redirect('/');
+                        error = er.toString();
+                        var ret = { error: error };      
+                        res.status(500).json(ret);
+                    }
+                    var ret = {error:error}
+                    res.status(200).json(ret);
+                }
+                else 
+                {
+                    var ret = {error:"Username does not exist"};
+                    res.status(204).json(ret);
+                }
+            } catch (er)
+            {
+                console.log(er);
+                var ret = {error:er.toString()};
+                res.status(500).json(ret);
+            }
+        } catch (err) {
+            console.log(err)
+            var ret = {error:err.toString()};
+            res.status(500).json(ret);
         }
 
-        var ret = { error: err };      
-        res.status(200).json(ret);
+        
+    });
+
+    app.post('/api/password-reset', async(req,res,next) =>
+    {
+        const { newPassword } = req.body;
+        var error = '';
+        const db = client.db();
+        try {
+            const results = await db.collection('Users').find({passwordResetTok:req.query.token});
+            // console.log(results.length.toString());
+            if (results.length >0)
+            {
+                var myQuery = {passwordResetTok:req.query.token};
+                var newVal = {$set:{password:req.body.newPassword, passwordResetTok:null}};
+                db.collection('Users').updateOne(myQuery,newVal,function(err,res){
+                    if (err) throw err;
+                    console.log("Collection Item Updated");
+                });
+                var ret = {error:error};
+                res.status(200).json(ret);
+            }
+            else 
+            {
+                var ret = {error: "No User Found"};
+                res.status(204).json(ret);
+                // return res.redirect('/');
+            }
+        } catch (err) {
+            error = err.toString();
+            var ret = {error:error};
+            res.status(500).json(ret);
+        }
+        
     });
 
     //Send a Friend Request
