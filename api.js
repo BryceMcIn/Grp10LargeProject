@@ -428,7 +428,7 @@ exports.setApp = function( app, client)
      });
 
      //Show all a users bucket list items
-     app.post('/api/all_buckets', async (req, res, next) => 
+    app.post('/api/all-buckets', async (req, res, next) => 
     {  
         // incoming: userId // outgoing: list of all bucket list items, error 
         var error = '';
@@ -437,27 +437,18 @@ exports.setApp = function( app, client)
         const { userID } = req.body;  
         const db = client.db();  
         const results = await db.collection('Bucket').find({userID:userID}).toArray();
-        var _ret = [];
-        var _ret1 = [];
-        if( results.length > 0 )  
-        {    
-            for (i =0; i<results.length;i++)
-            {
-                _ret.push(results[i]._id,results[i].itemTitle,results[i].caption,results[i].completed);
-                x++;
-            }
+        
+        if (results.length < 1)
+        {
+            error = "No bucket list items found"
+                var ret = { error: error };      
+                res.status(500).json(ret);
         }
-    if (x == 0)
-    {
-        error = "No bucket list items found"
-            var ret = { error: error };      
-            res.status(500).json(ret);
-    }
-    else
-    {
-        var ret = {results:_ret, error:error};  
-        res.status(200).json(ret);
-    }
+        else
+        {
+            var ret = {results:results, error:error};  
+            res.status(200).json(ret);
+        }
     });
 
     //delete bucket list item
