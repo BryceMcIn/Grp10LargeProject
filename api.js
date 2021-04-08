@@ -218,9 +218,9 @@ exports.setApp = function( app, client)
         var error = '';
         const db = client.db();
         try {
-            const results = await db.collection('Users').find({passwordResetTok:req.query.token});
-            // console.log(results.length.toString());
-            if (results.length >0)
+            const results = await db.collection('Users').find({passwordResetTok:req.query.token}).toArray();
+            // console.log(results.length);
+            if (results.length > 0)
             {
                 var myQuery = {passwordResetTok:req.query.token};
                 var newVal = {$set:{password:req.body.newPassword, passwordResetTok:null}};
@@ -233,7 +233,8 @@ exports.setApp = function( app, client)
             }
             else 
             {
-                var ret = {error: "No User Found"};
+                // console.log("No User Found");
+                var ret = {error: "Invalid Token"};
                 res.status(204).json(ret);
                 // return res.redirect('/');
             }
