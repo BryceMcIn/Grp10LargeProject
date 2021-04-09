@@ -247,7 +247,7 @@ exports.setApp = function( app, client)
     });
 
     //Send a Friend Request
-    app.post('/api/fr_request', async (req, res, next) =>    
+    app.post('/api/fr-request', async (req, res, next) =>    
     {      // incoming: sender Id, reciever Id      // outgoing: error/no error     
         const { senderID, recieverID } = req.body;      
         const newFR = {senderID:senderID,recieverID:recieverID};      
@@ -284,7 +284,7 @@ exports.setApp = function( app, client)
     });
 
     //Accept/Decline Friend Request
-    app.post('/api/fr_response', async (req, res, next) =>    
+    app.post('/api/fr-response', async (req, res, next) =>    
     {
         const { userID, friendID } = req.body;      
         const newFriend = {userID:userID,friendID:friendID};
@@ -334,7 +334,7 @@ exports.setApp = function( app, client)
     });
 
     //Remove a friend
-    app.post('/api/fr_remove', async (req, res, next) => 
+    app.post('/api/fr-remove', async (req, res, next) => 
     {  
         // incoming: userId, friendId  // outgoing: error 
         var error = '';  
@@ -368,7 +368,7 @@ exports.setApp = function( app, client)
     });
 
     //Show all friends for user
-    app.post('/api/fr_allfriends', async (req, res, next) => 
+    app.post('/api/fr-allfriends', async (req, res, next) => 
     {  
         // incoming: userId // outgoing: list of ids, error 
         var error = '';
@@ -409,7 +409,7 @@ exports.setApp = function( app, client)
     });
 
      //Add a bucket list item
-     app.post('/api/add_bucket', async (req, res, next) =>    
+     app.post('/api/add-bucket', async (req, res, next) =>    
      {      // incoming: sender Id, reciever Id      // outgoing: error/no error     
          const { userID, itemTitle, caption } = req.body;      
          const newbucket = {userID:userID,itemTitle:itemTitle,caption:caption,completed:false};      
@@ -452,7 +452,7 @@ exports.setApp = function( app, client)
     });
 
     //delete bucket list item
-    app.post('/api/delete_bucket', async (req, res, next) =>    
+    app.post('/api/delete-bucket', async (req, res, next) =>    
      {      // incoming: id of bucket      // outgoing: error/no error   
          ObjectId = require('mongodb').ObjectID;
          const { ID } = req.body;           
@@ -478,18 +478,138 @@ exports.setApp = function( app, client)
      });
      
      //edit a bucket list item / mark as complete
-     app.post('/api/edit_bucket', async (req, res, next) =>    
+     app.post('/api/edit-bucket', async (req, res, next) =>    
      { 
-     ObjectId = require('mongodb').ObjectID;
-     const { ID, itemTitle, caption, completed} = req.body;
-     var error = '';
+        ObjectId = require('mongodb').ObjectID;
+        const { ID, itemTitle, caption, completed} = req.body;
+        var error = '';
 
-     var myquery = { _id: new ObjectId(ID)};
-     const db = client.db();  
-     var newvalues = { $set: {itemTitle: itemTitle, caption: caption, completed:completed } };
-     db.collection('Bucket').updateOne(myquery, newvalues);
+        var myquery = { _id: new ObjectId(ID)};
+        const db = client.db();  
+        var newvalues = { $set: {itemTitle: itemTitle, caption: caption, completed:completed } };
+        db.collection('Bucket').updateOne(myquery, newvalues);
 
-    var ret = { error: error };      
-    res.status(200).json(ret);
+        var ret = { error: error };      
+        res.status(200).json(ret);
     });
+
+    //Add a to do list item
+    app.post('/api/add-todo', async (req, res, next) =>    
+    {      // incoming: sender Id, reciever Id      // outgoing: error/no error     
+        const { userID, itemTitle } = req.body;      
+        const newbucket = {userID:userID,itemTitle:itemTitle,completed:false};      
+        var error = '';
+            try      
+            {        
+                const db = client.db();        
+                const result = db.collection('To Do').insertOne(newbucket);     
+                var ret = {error:error};
+                res.status(200).json(ret); 
+            }      
+            catch(e)      
+            {        
+               error = e.toString();  
+               console.log(error);
+               var ret = { error: error };      
+               res.status(500).json(ret);    
+            }         
+    });
+
+    //Show all a users to do list items
+   app.post('/api/all-todo', async (req, res, next) => 
+   {  
+       // incoming: userId // outgoing: list of all bucket list items, error 
+       var error = '';
+       const { userID } = req.body;  
+       const db = client.db();  
+       const results = await db.collection('To Do').find({userID:userID}).toArray();
+       
+       if (results.length < 1)
+       {
+           error = "No to do list items found"
+               var ret = { error: error };      
+               res.status(204).json(ret);
+       }
+       else
+       {
+           var ret = {results:results, error:error};  
+           res.status(200).json(ret);
+       }
+   });
+
+   //delete to do list item
+   app.post('/api/delete-todo', async (req, res, next) =>    
+    {      // incoming: id of bucket      // outgoing: error/no error   
+        ObjectId = require('mongodb').ObjectID;
+        const { ID } = req.body;           
+        var error = '';
+        const db = client.db();  
+        const results = await db.collection('To Do').find({_id: new ObjectId(ID)}).toArray();
+        user = results[0].userID;
+        item = results[0].itemTitle;
+         complete = results[0].completed
+         const deletebucket = {_id: new ObjectId(ID),userID:user,itemTitle:item,completed:complete};
+         try      
+           {        
+               const db = client.db();        
+               const result = db.collection('To Do').remove(deletebucket);     
+               var ret = {error:error};
+               res.status(200).json(ret); 
+           }      
+         catch(e)      
+           {        
+               error = e.toString();   
+               console.log(error);  
+               var ret = {error:error}
+               res.status(500).json(ret); 
+           }         
+         
+    });
+    
+    //edit a to do list item / mark as complete
+    app.post('/api/edit-todo', async (req, res, next) =>    
+    { 
+        ObjectId = require('mongodb').ObjectID;
+        const { ID, itemTitle, completed} = req.body;
+        var error = '';
+        try{
+            var myquery = { _id: new ObjectId(ID)};
+            const db = client.db();  
+            var newvalues = { $set: {itemTitle: itemTitle, completed:completed } };
+            db.collection('To Do').updateOne(myquery, newvalues);
+            
+            var ret = { error: error };      
+        res.status(200).json(ret);
+        } catch (er)
+        {
+            error = er.toString();
+            console.log(error);
+            var ret = {error:error}
+            res.status(500).json(ret);
+    }
+   });
+
+   app.post('/api/mark-completed-todo', async (req,res,next) =>
+   {
+        const{itemTitle,userID,completed} = req.body;
+        var error = '';
+        const db = client.db();
+        try {
+            var myQuery = {itemTitle:itemTitle,userID:userID};
+            var newVal = {$set:{completed:completed}};
+            db.collection('To Do').updateOne(myQuery,newVal,function(err,res){
+                if (err) throw err;
+                console.log("Collection Item Updated");
+            });
+            var ret = {error:error};
+            res.status(200).json(ret);
+        } catch (er) 
+        {
+            error = er.toString();
+            console.log(error);
+            var ret = {error:error};
+            res.status(500).json(ret);
+        }
+   });
+
 }
