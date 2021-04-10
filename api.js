@@ -249,10 +249,21 @@ exports.setApp = function( app, client)
     //Send a Friend Request
     app.post('/api/fr-request', async (req, res, next) =>    
     {      // incoming: sender Id, reciever Id      // outgoing: error/no error     
-        const { senderID, recieverID } = req.body;      
-        const newFR = {senderID:senderID,recieverID:recieverID};      
+        const { senderID, login } = req.body;      
         var error = '';
-        const db = client.db();  
+        var recieverID;
+        const db = client.db();
+        const results2 = await db.collection('Users').find({login:login}).toArray();
+        if( results2.length < 1 )  
+        { 
+            error = "The username specified does not exist."
+            var ret = { error: error };      
+            res.status(500).json(ret);
+        }
+        recieverID = results2[0]._id;
+        recieverID = recieverID.toString();
+        const newFR = {senderID:senderID,recieverID:recieverID}; 
+
         const results = await db.collection('Request').find({senderID:senderID,recieverID:recieverID}).toArray();
         const results1 = await db.collection('Request').find({senderID:recieverID,recieverID:senderID}).toArray();
         if( results.length > 0 )  
@@ -283,10 +294,40 @@ exports.setApp = function( app, client)
         }
     });
 
+    //Query All Friend Request for Users
+    app.post('/api/all-requests', async (req, res, next) => 
+    {  
+        // incoming: userId // outgoing: list of all friendIDs which are pending a request, error 
+        var error = '';
+        var x = 0;
+        var i;
+        const { userID } = req.body;  
+        const db = client.db();  
+        const results = await db.collection('Request').find({senderID:userID}).toArray();
+        const results1 = await db.collection('Request').find({recieverID:userID}).toArray();
+        var _ret = [];
+        for (i=0; i<results.length;i++)
+        {
+            results.push(results1[x]);
+            x++;
+        }
+        if (results.length < 1)
+        {
+            error = "No requests"
+                var ret = { error: error };      
+                res.status(500).json(ret);
+        }
+        else
+        {
+            var ret = {results:_ret, error:error};  
+            res.status(200).json(ret);
+        }
+    });
+
     //Accept/Decline Friend Request
     app.post('/api/fr-response', async (req, res, next) =>    
     {
-        const { userID, friendID } = req.body;      
+        const { userID, friendID, status } = req.body;      
         const newFriend = {userID:userID,friendID:friendID};
         var error = '';
             const db = client.db();  
@@ -295,35 +336,71 @@ exports.setApp = function( app, client)
             if( results.length > 0 )
             {
             const removePending = {senderID:userID,recieverID:friendID}; 
-            try      
-            {        
-                    const db = client.db();        
-                    const result = db.collection('Friends').insertOne(newFriend);
-                    const result1 = db.collection('Request').remove(removePending);  
-                    
-            }      
-            catch(e)      
-            {        
-                error = e.toString();      
-            }         
-            var ret = { error: error };      
-            res.status(200).json(ret);
+            if (status == "A") 
+            {
+                try      
+                {        
+                        const db = client.db();        
+                        const result = db.collection('Friends').insertOne(newFriend);
+                        const result1 = db.collection('Request').remove(removePending);  
+                        
+                }      
+                catch(e)      
+                {        
+                    error = e.toString();      
+                }         
+                var ret = { error: error };      
+                res.status(200).json(ret);
+            }
+            else
+            {
+                try      
+                {        
+                        const db = client.db();        
+                        const result1 = db.collection('Request').remove(removePending);  
+                        
+                }      
+                catch(e)      
+                {        
+                    error = e.toString();      
+                }         
+                var ret = { error: error };      
+                res.status(200).json(ret);
+            }
         }
         else if( results1.length > 0 )
         {
             const removePending1 = {senderID:friendID,recieverID:userID}; 
-            try      
-            {        
-                const db = client.db();        
-                const result = db.collection('Friends').insertOne(newFriend);
-                const result1 = db.collection('Request').remove(removePending1);
-            }      
-            catch(e)      
-            {        
-                error = e.toString();      
-            }         
-            var ret = { error: error };      
-            res.status(200).json(ret);
+            if (status == "A") 
+            {
+                try      
+                {        
+                    const db = client.db();        
+                    const result = db.collection('Friends').insertOne(newFriend);
+                    const result1 = db.collection('Request').remove(removePending1);
+                }      
+                catch(e)      
+                {        
+                    error = e.toString();      
+                }         
+                var ret = { error: error };      
+                res.status(200).json(ret);
+            }
+            else
+            {
+                try      
+                {        
+                        const db = client.db();        
+                        const result1 = db.collection('Request').remove(removePending);  
+                        
+                }      
+                catch(e)      
+                {        
+                    error = e.toString();      
+                }         
+                var ret = { error: error };      
+                res.status(200).json(ret);
+            }
         }
         else
         {
@@ -611,5 +688,43 @@ exports.setApp = function( app, client)
             res.status(500).json(ret);
         }
    });
+
+   //search for a bucket list
+app.post('/api/search-bucket', async (req, res, next) => 
+{
+    var error = '';
+    const { userId, search } = req.body;
+    var _search = search.trim();
+    const db = client.db();
+    const results = await db.collection('Bucket').find({"itemTitle":{$regex:_search+'.*', $options:'r'}}).toArray();
+    var _ret = [];
+    if (results.length < 1)
+    {
+        error = "No bucket list items found"
+        var ret = { error: error };      
+        res.status(500).json(ret);
+    }
+    var ret = {results:results, error:error};
+    res.status(200).json(ret);
+});
+
+//search for a to do list
+app.post('/api/search-todo', async (req, res, next) => 
+{
+    var error = '';
+    const { userId, search } = req.body;
+    var _search = search.trim();
+    const db = client.db();
+    const results = await db.collection('To Do').find({"itemTitle":{$regex:_search+'.*', $options:'r'}}).toArray();
+    var _ret = [];
+    if (results.length < 1)
+    {
+        error = "No todo list items found"
+        var ret = { error: error };      
+        res.status(500).json(ret);
+    }
+    var ret = {results:results, error:error};
+    res.status(200).json(ret);
+});
 
 }
