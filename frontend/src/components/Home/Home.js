@@ -19,9 +19,9 @@ function Home(props){
   var ud = jwt.decode(tok,{json:true});
 
   console.log(ud)
-  var userId = ud.payload.id;
-  var firstName = ud.payload.firstName; 
-  var lastName = ud.payload.lastName;
+  var userId = ud.id;
+  var firstName = ud.firstName; 
+  var lastName = ud.lastName;
 
 
   const [state, setState] = useState({
