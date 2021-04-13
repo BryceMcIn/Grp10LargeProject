@@ -1,5 +1,5 @@
 const { title } = require('process');
-
+const jwt = require('jsonwebtoken');
 
 exports.setApp = function( app, client)
 {
