@@ -25,7 +25,13 @@ exports.setApp = function( app, client)
             em = results[0].email;
             ver = results[0].isVerified;
             emTok = results[0].emailTok
-            var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
+            //JWT CODE
+            try{
+                ret = jwt.createToken(fn,ln,id);
+            }
+            catch(e){
+                ret = {error:e.message};
+            }  
             res.status(200).json(ret);
         }
         else 
