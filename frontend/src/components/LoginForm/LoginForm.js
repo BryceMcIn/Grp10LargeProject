@@ -28,7 +28,7 @@ function LoginForm(props) {
             "login":state.email,
             "password":state.password,
         }
-        axios.post(API_BASE_URL+'/api/login', payload)
+        axios.post('/api/login', payload)
             .then(function (response) {
                 if(response.status === 200){
                     setState(prevState => ({
