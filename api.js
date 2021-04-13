@@ -1,5 +1,5 @@
 const { title } = require('process');
-const jwt = require('jsonwebtoken');
+const jwt = require('./createJWT')
 
 exports.setApp = function( app, client)
 {
