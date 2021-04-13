@@ -6,7 +6,7 @@ import { withRouter } from "react-router-dom";
 
 function LoginForm(props) {
 
-    const storage = require('../tokenStorage.js');
+    const storage = require('../../tokenStorage.js');
 
     const [state , setState] = useState({
         email : "",
