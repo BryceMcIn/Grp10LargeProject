@@ -16,7 +16,7 @@ function Home(props){
 
 
   var tok = storage.retrieveToken();
-  var ud = jwt.decode(tok,{complete:true});
+  var ud = jwt.decode(tok,{json:true});
 
   console.log(ud)
   var userId = ud.payload.id;

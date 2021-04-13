@@ -36,6 +36,7 @@ function LoginForm(props) {
                         'successMessage' : 'Login successful. Redirecting to home page..'
                     }))
                     var res = response.data;
+                    console.log(res)
                     storage.storeToken(res);
                     redirectToHome();
                     props.showError(null)
