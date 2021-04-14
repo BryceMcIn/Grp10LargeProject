@@ -118,7 +118,7 @@ function Home(props){
     <input type="text" class="form-control searchBar" placeholder="Search..."></input>
   </div>
 </div>
-    <listContainer listItems={listItems}/>
+    <h5>{listItems[0].itemTitle}</h5>
       </body>
     </html>
   )
