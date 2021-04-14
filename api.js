@@ -29,7 +29,7 @@ exports.setApp = function( app, client)
             ver = results[0].isVerified;
             emTok = results[0].emailTok
             try{
-                myToken = jwt.createToken(res.firstName,res.lastName,res.id);
+                myToken = jwt.createToken(fn,ln,id);
             }
             catch(e){
                 console.log(e.message);
