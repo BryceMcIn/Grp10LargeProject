@@ -1,5 +1,7 @@
 const { title } = require('process');
-
+//add this to the top:
+const sha256 = require('js-sha256');
+const jwt = require('./createJWT')
 
 exports.setApp = function( app, client)
 {
@@ -10,13 +12,14 @@ exports.setApp = function( app, client)
         var error = '';  
         const { login, password } = req.body;  
         const db = client.db();  
-        const results = await db.collection('Users').find({login:login,password:password}).toArray();
+        const results = await db.collection('Users').find({login:login,password:sha256(password)}).toArray();
         var id = -1;  
         var fn = '';  
         var ln = '';
         var em = '';
         var ver = false; 
         var emTok = '';
+        var myToken = null;
         if( results.length > 0 )  
         {    
             id = results[0]._id;
@@ -25,7 +28,13 @@ exports.setApp = function( app, client)
             em = results[0].email;
             ver = results[0].isVerified;
             emTok = results[0].emailTok
-            var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
+            try{
+                myToken = jwt.createToken(fn,ln,id);
+            }
+            catch(e){
+                console.log(e.message);
+            }
+            var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, jwt:myToken, error:''};  
             res.status(200).json(ret);
         }
         else 
@@ -41,7 +50,7 @@ exports.setApp = function( app, client)
     {      // incoming: firstName, lastName, login, email, password      // outgoing: error/no error   
         const crypto = require('crypto');
         const { firstName, lastName, login, email, password } = req.body;      
-        const newUser = {firstName:firstName,lastName:lastName,login:login,email:email,emailTok:crypto.randomBytes(64).toString('hex'),password:password,isVerified:false};      
+        const newUser = {firstName:firstName,lastName:lastName,login:login,email:email,emailTok:crypto.randomBytes(64).toString('hex'),password:sha256(password),isVerified:false};      
         var error = '';
         const db = client.db();  
         const results = await db.collection('Users').find({login:login}).toArray();
@@ -166,7 +175,6 @@ exports.setApp = function( app, client)
                         Hello! 
                         Copy and paste the following link in your browser to reset your password:
                         http://${req.headers.host}/api/password-reset?token=${tok} 
-
                         If you did not request this password reset link, please consider changing your password. 
                     `,
                     html: `
@@ -223,7 +231,7 @@ exports.setApp = function( app, client)
             if (results.length > 0)
             {
                 var myQuery = {passwordResetTok:req.query.token};
-                var newVal = {$set:{password:req.body.newPassword, passwordResetTok:null}};
+                var newVal = {$set:{password:sha256(req.body.newPassword), passwordResetTok:null}};
                 db.collection('Users').updateOne(myQuery,newVal,function(err,res){
                     if (err) throw err;
                     console.log("Collection Item Updated");
@@ -725,6 +733,138 @@ app.post('/api/search-todo', async (req, res, next) =>
     }
     var ret = {results:results, error:error};
     res.status(200).json(ret);
+});
+
+//change the login username
+app.post('/api/change-login', async (req, res, next) =>    
+{
+    ObjectId = require('mongodb').ObjectID;
+    const { userID, login, newLogin, password} = req.body;
+    var error = '';
+    var id = -1;  
+    var fn = '';  
+    var ln = '';
+    var em = '';
+    var ver = false; 
+    var emTok = '';
+    const db = client.db();  
+    const results = await db.collection('Users').find({_id:new ObjectId(userID),login:login,password:sha256(password)}).toArray();
+    if (results.length < 1)
+    {
+        error = "Invalid username/password combination"
+        var ret = { error: error };      
+        res.status(500).json(ret);
+    }
+    id = results[0]._id;
+    var fn = results[0].firstName;  
+    var ln = results[0].lastName;
+    var em = results[0].email;
+    var ver = results[0].isVerified; 
+    var emTok = results[0].emailTok;
+
+    try{
+        var myquery = { _id: new ObjectId(id)};
+        const db = client.db();  
+        var newvalues = { $set: {_id:id, firstName:fn, lastName:ln, login:newLogin, email:em, emailTok:emTok, password:sha256(password), isVerified:ver } };
+        db.collection('Users').updateOne(myquery, newvalues);
+        
+        var ret = { error: error };      
+    res.status(200).json(ret);
+    } catch (er)
+    {
+        error = er.toString();
+        console.log(error);
+        var ret = {error:error}
+        res.status(500).json(ret);
+}
+});
+
+//change the email for a user
+app.post('/api/change-email', async (req, res, next) =>    
+{
+    ObjectId = require('mongodb').ObjectID;
+    const { userID, email, newEmail, password} = req.body;
+    var error = '';
+    var id = -1;  
+    var fn = '';  
+    var ln = '';
+    var lg = '';
+    var ver = false; 
+    var emTok = '';
+    const db = client.db();  
+    const results = await db.collection('Users').find({_id:new ObjectId(userID),email:email,password:sha256(password)}).toArray();
+    if (results.length < 1)
+    {
+        error = "Invalid email/password combination"
+        var ret = { error: error };      
+        res.status(500).json(ret);
+    }
+    id = results[0]._id;
+    var fn = results[0].firstName;  
+    var ln = results[0].lastName;
+    var lg = results[0].login;
+    var ver = results[0].isVerified; 
+    var emTok = results[0].emailTok;
+
+    try{
+        var myquery = { _id: new ObjectId(id)};
+        const db = client.db();  
+        var newvalues = { $set: {_id:id, firstName:fn, lastName:ln, login:lg, email:newEmail, emailTok:emTok, password:sha256(password), isVerified:ver } };
+        db.collection('Users').updateOne(myquery, newvalues);
+        
+        var ret = { error: error };      
+    res.status(200).json(ret);
+    } catch (er)
+    {
+        error = er.toString();
+        console.log(error);
+        var ret = {error:error}
+        res.status(500).json(ret);
+}
+});
+
+//change the password for a user
+app.post('/api/change-password', async (req, res, next) =>    
+{
+    ObjectId = require('mongodb').ObjectID;
+    const { userID, login, password, newPassword } = req.body;
+    var error = '';
+    var id = -1;  
+    var fn = '';  
+    var ln = '';
+    var em = '';
+    var ver = false; 
+    var emTok = '';
+    const db = client.db();  
+    const results = await db.collection('Users').find({_id:new ObjectId(userID),login:login,password:sha256(password)}).toArray();
+    if (results.length < 1)
+    {
+        error = "Invalid email/password combination"
+        var ret = { error: error };      
+        res.status(500).json(ret);
+    }
+    id = results[0]._id;
+    var fn = results[0].firstName;  
+    var ln = results[0].lastName;
+    var em = results[0].email;
+    var ver = results[0].isVerified; 
+    var emTok = results[0].emailTok;
+
+    try{
+        var myquery = { _id: new ObjectId(id)};
+        const db = client.db();  
+        var newvalues = { $set: {_id:id, firstName:fn, lastName:ln, login:login, email:em, emailTok:emTok, password:sha256(newPassword), isVerified:ver } };
+        db.collection('Users').updateOne(myquery, newvalues);
+        
+        var ret = { error: error };      
+    res.status(200).json(ret);
+    } catch (er)
+    {
+        error = er.toString();
+        console.log(error);
+        var ret = {error:error}
+        res.status(500).json(ret);
+}
 });
 
 }
