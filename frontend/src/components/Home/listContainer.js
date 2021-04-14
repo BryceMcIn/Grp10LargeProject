@@ -1,8 +1,10 @@
 import React from 'react';
 
 export default function listContainer(props) {
-console.log(props.listItems);
-console.log(props)
+
+    const {listItems} = props;
+    console.log(listItems);
+    
 return(
     <>
     </>
