@@ -8,7 +8,7 @@ import { faList } from '@fortawesome/free-solid-svg-icons'
 import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import listItem from './listItem';
+import listContainer from './listContainer';
 
 function Home(props){
 
@@ -39,7 +39,7 @@ function Home(props){
     if(currentState===0){
       axios.post('/api/all-buckets', payload)
       .then((response) => {
-        var currentListItems = response.data.results;
+        const currentListItems = response.data.results;
         getListItems(currentListItems);
       })
       .catch(error => console.error(error));
@@ -117,7 +117,7 @@ function Home(props){
     <input type="text" class="form-control searchBar" placeholder="Search..."></input>
   </div>
 </div>
-    <listItem listItems={listItems}/>
+    <listContainer listItems={listItems}/>
       </body>
     </html>
   )
