@@ -8,22 +8,40 @@ import { faList } from '@fortawesome/free-solid-svg-icons'
 import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { response } from 'express';
+import listItem from './listItem';
 
 function Home(props){
 
   const jwt = require('jsonwebtoken');
   var storage = require('../../tokenStorage.js');
 
+  const [listItems, getListItems] = useState('');
+
+  useEffect(() => {
+    getAllListItems();
+  }, []);
+
+  const getAllListItems = () => {
+    if(currentState===0){
+      axios.post('/api/all-buckets', {userID:userID})
+      .then((response) => {
+        var currentListItems = response.data.results;
+        getListItems(currentListItems);
+      })
+      .catch(error => console.error(error));
+    }
+  }
 
   var tok = storage.retrieveToken();
   console.log(tok);
   var ud = jwt.decode(tok,{json:true});
 
   console.log(ud)
-  var userId = ud.id;
+  var userID = ud.id;
   var firstName = ud.firstName; 
   var lastName = ud.lastName;
-
+  var currentState = 0;
 
   const [state, setState] = useState({
     searchQuery : "",
@@ -96,6 +114,7 @@ function Home(props){
     <input type="text" class="form-control searchBar" placeholder="Search..."></input>
   </div>
 </div>
+    <listItem listItems={listItems}/>
       </body>
     </html>
   )
