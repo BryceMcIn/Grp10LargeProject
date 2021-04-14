@@ -32,7 +32,7 @@ function Home(props){
   }, []);
 
   const getAllListItems = async () => {
-    payload = {userID:localUserID};
+    const payload = {userID:localUserID};
     const response = await axios.post(payload);
     console.log(response);
     getListItems(response.data.results);
