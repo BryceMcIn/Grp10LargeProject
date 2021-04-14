@@ -16,6 +16,7 @@ function Home(props){
 
 
   var tok = storage.retrieveToken();
+  console.log(tok);
   var ud = jwt.decode(tok,{json:true});
 
   console.log(ud)

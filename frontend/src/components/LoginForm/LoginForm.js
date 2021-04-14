@@ -45,7 +45,7 @@ function LoginForm(props) {
                     catch(e){
                         console.log(e.message);
                     }
-
+                    console.log(myToken);
                     storage.storeToken(myToken);
                     redirectToHome();
                     props.showError(null)
