@@ -12,20 +12,28 @@ import ListContainer from './ListContainer';
 
 function Home(props){
 
+  const [state, setState] = useState({
+    searchQuery : "",
+    currentListItems : [],
+    currentState : 0,
+  })
+
+  const [addState, setAddState] = useState({
+    addTitle : "",
+    addDesc : "",
+    currentAddState: 0
+  })
+
   const jwt = require('jsonwebtoken');
   var storage = require('../../tokenStorage.js');
 
   var tok = storage.retrieveToken();
   var ud = jwt.decode(tok,{json:true});
 
-  console.log(ud)
   var localUserID = ud.userID;
   var firstName = ud.firstName; 
   var lastName = ud.lastName;
-  var currentState = 0;
   //END OF TOKEN CRAP
-
-  var currentListItems = [];
 
   useEffect(() => {
     getAllListItems();
@@ -34,25 +42,67 @@ function Home(props){
   const getAllListItems = async () => {
     const payload = {userID:localUserID};
     const response = await axios.post('/api/all-buckets',payload);
-    console.log(response);
-    currentListItems = response.data.results;
-    console.log(currentListItems);
+    var responseListItems = response.data.results;
+    console.log(responseListItems);
+    setState(prevState => ({
+      ...prevState,
+      currentListItems:responseListItems,
+    }))
   }
 
-  const [state, setState] = useState({
-    searchQuery : "",
-    displayState : 0,
-    addTitle : "",
-    addDesc : "",
-    addType : 0
-  })
+  const addItemToList = async () => {
+    if (addState.currentAddState == 0){
+      const payload = {userID:localUserID,itemTitle:addState.addTitle,caption:addState.addDesc};
+      const response = await axios.post('/api/add-bucket',payload);
+      if(await response.status != 200){
+        console.log("Big error. Probably caused by connection");
+        return;
+      }
+      console.log(addState);
+      setAddState(prevState => ({
+        ...prevState,
+        addTitle:"",
+        addDesc:""
+      }));
+      getAllListItems();
+    }
+    else{
+      const payload = {userID:localUserID,itemTitle:addState.addTitle};
+      const response = await axios.post('api/add-todo',payload);
+      if(await response.status != 200){
+        console.log("Big error. Probably caused by connection");
+        return;
+      }
+      console.log(addState);
+      setAddState(prevState => ({
+        ...prevState,
+        addTitle:"",
+        addDesc:""
+      }));
+      getAllListItems();
+    }
+  }
 
-  
+  const handleChange = (e) => {
+    const {id , value} = e.target   
+    setAddState(prevState => ({
+        ...prevState,
+        [id] : value
+    }))
+  }
+
+  const handleRadio = (e) => {
+    const {value} = e.target
+    setAddState(prevState => ({
+      ...prevState,
+      currentAddState : value
+    }))
+  }
+
   return(
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous"></link>
         <link rel="preconnect" href="https://fonts.gstatic.com"></link>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet"></link>
       </head>
@@ -63,17 +113,17 @@ function Home(props){
       Add to a list
     </div>
     <div class="addItem-container">
-      <input class="addItemTitle form-control" type="text" placeholder="Goal"></input>
-      <textarea class="addItemDesc form-control" type="text" placeholder="Describe your goal here!"></textarea>
+      <input class="addItemTitle form-control" id="addTitle" type="text" placeholder="Goal" value={addState.addTitle} onChange={handleChange}></input>
+      <textarea class="addItemDesc form-control" type="text" id="addDesc" placeholder="Describe your goal here!" value={addState.addDesc} onChange={handleChange}></textarea>
     </div>
     <div class="buttonContainer">
       <div>
         Which list?
       </div>
-      <div>
-        <input type="radio" class="listTypeButton btn-check" name="options" id="option1" autocomplete="off"></input><label class="btn btn-secondary" for="option1">Bucket</label> <input type="radio" class="btn-check listTypeButton" name="options" id="option2" autocomplete="off"></input><label class="btn btn-secondary" for="option2">Todo</label>
+      <div onChange={handleRadio}>
+        <input type="radio" value='0' class="listTypeButton btn-check" name="options" id="option1" autocomplete="off"></input><label class="btn btn-secondary" for="option1">Bucket</label> <input type="radio" class="btn-check listTypeButton" name="options" value='1' id="option2" autocomplete="off"></input><label class="btn btn-secondary" for="option2">Todo</label>
       </div>
-    </div><button type="button" class="btn addItemButton">Add</button>
+    </div><button type="button" disabled={!addState.addTitle} class="btn addItemButton" onClick={addItemToList}>Add</button>
   </div>
   <div class="sidenav">
     <div class="sidebar-header">
@@ -108,7 +158,7 @@ function Home(props){
   </div>
   <div class="content">
     <input type="text" class="form-control searchBar" placeholder="Search..."></input>
-    <ListContainer/>
+    <ListContainer state={state}/>
   </div>
 </div>
       </body>
