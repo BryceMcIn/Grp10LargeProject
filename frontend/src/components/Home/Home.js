@@ -25,26 +25,18 @@ function Home(props){
   var currentState = 0;
   //END OF TOKEN CRAP
 
-  const [listItems, getListItems] = useState('');
+  const [listItems, getListItems] = useState([]);
 
   useEffect(() => {
     getAllListItems();
   }, []);
 
-  const getAllListItems = () => {
-
-    const payload = {userID:localUserID};
-
-    if(currentState===0){
-      axios.post('/api/all-buckets', payload)
-      .then((response) => {
-        const currentListItems = response.data.results;
-        console.log(currentListItems);
-        getListItems(currentListItems);
-        console.log(listItems);
-      })
-      .catch(error => console.error(error));
-    }
+  const getAllListItems = async () => {
+    payload = {userID:localUserID};
+    const response = await axios.post(payload);
+    console.log(response);
+    getListItems(response.data.results);
+    console.log(listItems);
   }
 
   const [state, setState] = useState({
