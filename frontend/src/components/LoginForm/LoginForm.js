@@ -36,7 +36,7 @@ function LoginForm(props) {
                         'successMessage' : 'Login successful. Redirecting to home page..'
                     }))
                 
-                    res = response.data;
+                    var res = response.data;
                     console.log(res);
                     try{
                         myToken = jwt.createToken(res.firstName,res.lastName,res.id);
@@ -44,7 +44,7 @@ function LoginForm(props) {
                     catch(e){
                         console.log(e.message);
                     }
-                    
+
                     storage.storeToken(myToken);
                     redirectToHome();
                     props.showError(null)
