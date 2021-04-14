@@ -1,10 +1,10 @@
 import React from 'react';
 
-function listContainer(props) {
+function ListContainer(props) {
 
 return(
     <h3>This is a test</h3>
 )
 }
 
-export default listContainer
+export default ListContainer

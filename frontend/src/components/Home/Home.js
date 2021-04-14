@@ -8,7 +8,7 @@ import { faList } from '@fortawesome/free-solid-svg-icons'
 import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import listContainer from './ListContainer';
+import ListContainer from './ListContainer';
 
 function Home(props){
 
