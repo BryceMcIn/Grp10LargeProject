@@ -4,10 +4,11 @@ import './LoginForm.css';
 import {API_BASE_URL, ACCESS_TOKEN_NAME} from '../../constants/apiConstants';
 import { withRouter } from "react-router-dom";
 
+
 function LoginForm(props) {
 
     const storage = require('../../tokenStorage.js');
-
+    const jwt = require ('../../../../createJWT.js');
     const [state , setState] = useState({
         email : "",
         password : "",
@@ -39,7 +40,7 @@ function LoginForm(props) {
                     var res = response.data;
                     console.log(res);
                     try{
-                        myToken = jwt.createToken(res.firstName,res.lastName,res.id);
+                        var myToken = jwt.createToken(res.firstName,res.lastName,res.id);
                     }
                     catch(e){
                         console.log(e.message);
