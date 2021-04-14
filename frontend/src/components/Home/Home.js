@@ -25,7 +25,7 @@ function Home(props){
   var currentState = 0;
   //END OF TOKEN CRAP
 
-  const [listItems, getListItems] = useState([]);
+  const [listItems, getListItems] = useState('');
 
   useEffect(() => {
     getAllListItems();
