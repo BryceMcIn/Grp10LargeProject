@@ -1,7 +1,7 @@
 const { title } = require('process');
 //add this to the top:
 const sha256 = require('js-sha256');
-const jwt = require('creatJWT.js')
+const jwt = require('createJWT.js')
 
 exports.setApp = function( app, client)
 {
