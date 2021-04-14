@@ -39,6 +39,7 @@ function Home(props){
       axios.post('/api/all-buckets', payload)
       .then((response) => {
         const currentListItems = response.data.results;
+        console.log(currentListItems);
         getListItems(currentListItems);
         console.log(listItems);
       })
