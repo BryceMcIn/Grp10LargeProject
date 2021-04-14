@@ -1,7 +1,7 @@
 const { title } = require('process');
 //add this to the top:
 const sha256 = require('js-sha256');
-
+const jwt = require('creatJWT.js')
 
 exports.setApp = function( app, client)
 {
@@ -19,6 +19,7 @@ exports.setApp = function( app, client)
         var em = '';
         var ver = false; 
         var emTok = '';
+        var myToken = null;
         if( results.length > 0 )  
         {    
             id = results[0]._id;
@@ -27,7 +28,13 @@ exports.setApp = function( app, client)
             em = results[0].email;
             ver = results[0].isVerified;
             emTok = results[0].emailTok
-            var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
+            try{
+                myToken = jwt.createToken(res.firstName,res.lastName,res.id);
+            }
+            catch(e){
+                console.log(e.message);
+            }
+            var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, jwt:myToken, error:''};  
             res.status(200).json(ret);
         }
         else 

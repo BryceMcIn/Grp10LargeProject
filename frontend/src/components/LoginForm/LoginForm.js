@@ -8,7 +8,6 @@ require("dotenv").config();
 function LoginForm(props) {
 
     const storage = require('../../tokenStorage.js');
-    const jwt = require ('../../createJWT.js');
     const [state , setState] = useState({
         email : "",
         password : "",
@@ -39,14 +38,7 @@ function LoginForm(props) {
                 
                     var res = response.data;
                     console.log(res);
-                    try{
-                        var myToken = jwt.createToken(res.firstName,res.lastName,res.id);
-                    }
-                    catch(e){
-                        console.log(e.message);
-                    }
-                    console.log(myToken);
-                    storage.storeToken(myToken);
+                    storage.storeToken(res.jwt);
                     redirectToHome();
                     props.showError(null)
                 }
