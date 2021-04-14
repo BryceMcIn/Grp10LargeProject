@@ -15,23 +15,6 @@ function Home(props){
   const jwt = require('jsonwebtoken');
   var storage = require('../../tokenStorage.js');
 
-  const [listItems, getListItems] = useState('');
-
-  useEffect(() => {
-    getAllListItems();
-  }, []);
-
-  const getAllListItems = () => {
-    if(currentState===0){
-      axios.post('/api/all-buckets', {userID:userID})
-      .then((response) => {
-        var currentListItems = response.data.results;
-        getListItems(currentListItems);
-      })
-      .catch(error => console.error(error));
-    }
-  }
-
   var tok = storage.retrieveToken();
   console.log(tok);
   var ud = jwt.decode(tok,{json:true});
@@ -41,6 +24,28 @@ function Home(props){
   var firstName = ud.firstName; 
   var lastName = ud.lastName;
   var currentState = 0;
+  //END OF TOKEN CRAP
+
+
+  const [listItems, getListItems] = useState('');
+
+  useEffect(() => {
+    getAllListItems();
+  }, []);
+
+  const getAllListItems = () => {
+
+    const payload = {userID:userID};
+
+    if(currentState===0){
+      axios.post('/api/all-buckets', payload)
+      .then((response) => {
+        var currentListItems = response.data.results;
+        getListItems(currentListItems);
+      })
+      .catch(error => console.error(error));
+    }
+  }
 
   const [state, setState] = useState({
     searchQuery : "",
