@@ -16,7 +16,6 @@ function Home(props){
   var storage = require('../../tokenStorage.js');
 
   var tok = storage.retrieveToken();
-  console.log(tok);
   var ud = jwt.decode(tok,{json:true});
 
   console.log(ud)
@@ -40,8 +39,8 @@ function Home(props){
       axios.post('/api/all-buckets', payload)
       .then((response) => {
         const currentListItems = response.data.results;
-        console.log(currentListItems);
         getListItems(currentListItems);
+        console.log(listItems);
       })
       .catch(error => console.error(error));
     }
@@ -118,7 +117,6 @@ function Home(props){
     <input type="text" class="form-control searchBar" placeholder="Search..."></input>
   </div>
 </div>
-    <h5>{listItems[0].itemTitle}</h5>
       </body>
     </html>
   )

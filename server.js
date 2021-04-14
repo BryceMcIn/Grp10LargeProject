@@ -11,7 +11,7 @@ app.set('port',(process.env.PORT || 5000));
 app.use(cors());
 app.use(bodyParser.json());
 
-// require('dotenv').config();
+require('dotenv').config();
 const url = process.env.MONGODB_URI;
 const MongoClient = require('mongodb').MongoClient; 
 const client = new MongoClient(url);
