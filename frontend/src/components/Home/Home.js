@@ -25,7 +25,7 @@ function Home(props){
   var currentState = 0;
   //END OF TOKEN CRAP
 
-  const [listItems, getListItems] = useState([]);
+  var currentListItems = [];
 
   useEffect(() => {
     getAllListItems();
@@ -35,8 +35,8 @@ function Home(props){
     const payload = {userID:localUserID};
     const response = await axios.post('/api/all-buckets',payload);
     console.log(response);
-    getListItems(response.data.results);
-    console.log(listItems);
+    currentListItems = response.data.results;
+    console.log(currentListItems);
   }
 
   const [state, setState] = useState({
@@ -108,6 +108,7 @@ function Home(props){
   </div>
   <div class="content">
     <input type="text" class="form-control searchBar" placeholder="Search..."></input>
+    <listContainer/>
   </div>
 </div>
       </body>

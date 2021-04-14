@@ -27,7 +27,7 @@ function LoginForm(props) {
             "login":state.email,
             "password":state.password,
         }
-        axios.post('/api/login', payload)
+        axios.post('https://letsbuckit.herokuapp.com/api/login', payload)
             .then(function (response) {
                 if(response.status === 200){
                     setState(prevState => ({
