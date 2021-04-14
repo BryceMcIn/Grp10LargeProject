@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default function listItem(props) {
-console.log(props.listItem);
+export default function listContainer(props) {
+console.log(props.listTitle);
 return(
     <>
     </>

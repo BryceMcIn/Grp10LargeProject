@@ -20,7 +20,7 @@ function Home(props){
   var ud = jwt.decode(tok,{json:true});
 
   console.log(ud)
-  var userID = ud.id;
+  var localUserID = ud.userID;
   var firstName = ud.firstName; 
   var lastName = ud.lastName;
   var currentState = 0;
@@ -34,7 +34,7 @@ function Home(props){
 
   const getAllListItems = () => {
 
-    const payload = {userID:"605faf43596b7242de2c8c39"};
+    const payload = {userID:localUserID};
 
     if(currentState===0){
       axios.post('/api/all-buckets', payload)
