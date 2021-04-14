@@ -1,5 +1,7 @@
 const { title } = require('process');
-const jwt = require('./createJWT')
+//add this to the top:
+const sha256 = require('js-sha256');
+
 
 exports.setApp = function( app, client)
 {
@@ -10,7 +12,7 @@ exports.setApp = function( app, client)
         var error = '';  
         const { login, password } = req.body;  
         const db = client.db();  
-        const results = await db.collection('Users').find({login:login,password:password}).toArray();
+        const results = await db.collection('Users').find({login:login,password:sha256(password)}).toArray();
         var id = -1;  
         var fn = '';  
         var ln = '';
@@ -25,13 +27,7 @@ exports.setApp = function( app, client)
             em = results[0].email;
             ver = results[0].isVerified;
             emTok = results[0].emailTok
-            //JWT CODE
-            try{
-                ret = jwt.createToken(fn,ln,id);
-            }
-            catch(e){
-                ret = {error:e.message};
-            }  
+            var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
             res.status(200).json(ret);
         }
         else 
@@ -47,7 +43,7 @@ exports.setApp = function( app, client)
     {      // incoming: firstName, lastName, login, email, password      // outgoing: error/no error   
         const crypto = require('crypto');
         const { firstName, lastName, login, email, password } = req.body;      
-        const newUser = {firstName:firstName,lastName:lastName,login:login,email:email,emailTok:crypto.randomBytes(64).toString('hex'),password:password,isVerified:false};      
+        const newUser = {firstName:firstName,lastName:lastName,login:login,email:email,emailTok:crypto.randomBytes(64).toString('hex'),password:sha256(password),isVerified:false};      
         var error = '';
         const db = client.db();  
         const results = await db.collection('Users').find({login:login}).toArray();
@@ -172,7 +168,6 @@ exports.setApp = function( app, client)
                         Hello! 
                         Copy and paste the following link in your browser to reset your password:
                         http://${req.headers.host}/api/password-reset?token=${tok} 
-
                         If you did not request this password reset link, please consider changing your password. 
                     `,
                     html: `
@@ -229,7 +224,7 @@ exports.setApp = function( app, client)
             if (results.length > 0)
             {
                 var myQuery = {passwordResetTok:req.query.token};
-                var newVal = {$set:{password:req.body.newPassword, passwordResetTok:null}};
+                var newVal = {$set:{password:sha256(req.body.newPassword), passwordResetTok:null}};
                 db.collection('Users').updateOne(myQuery,newVal,function(err,res){
                     if (err) throw err;
                     console.log("Collection Item Updated");

@@ -35,13 +35,21 @@ function LoginForm(props) {
                         ...prevState,
                         'successMessage' : 'Login successful. Redirecting to home page..'
                     }))
-                    var res = response.data;
-                    console.log(res)
-                    storage.storeToken(res);
+                
+                    res = response.data;
+                    console.log(res);
+                    try{
+                        myToken = jwt.createToken(res.firstName,res.lastName,res.id);
+                    }
+                    catch(e){
+                        console.log(e.message);
+                    }
+                    
+                    storage.storeToken(myToken);
                     redirectToHome();
                     props.showError(null)
                 }
-                else if(response.code === 204){
+                else if(response.status === 204){
                     props.showError("Username and password do not match");
                 }
                 else{
