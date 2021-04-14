@@ -8,7 +8,7 @@ import { faList } from '@fortawesome/free-solid-svg-icons'
 import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import listContainer from './listContainer';
+import listContainer from './ListContainer';
 
 function Home(props){
 
@@ -108,7 +108,7 @@ function Home(props){
   </div>
   <div class="content">
     <input type="text" class="form-control searchBar" placeholder="Search..."></input>
-    <listContainer/>
+    <ListContainer/>
   </div>
 </div>
       </body>
