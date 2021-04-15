@@ -8,10 +8,94 @@ import { faList } from '@fortawesome/free-solid-svg-icons'
 import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import ListContainer from './ListContainer';
+import { faCheckSquare, faSquare, faTrash, faYenSign } from '@fortawesome/free-solid-svg-icons';
+
 
 function Home(props){
 
+  function ListContainer(props) {
+
+    var listItemState = '';
+    if (props.state.currentState === 0) {
+        listItemState = "Bucket List";
+    }
+    else {
+        listItemState = "Todo List";
+    }
+    if (props.state.currentListItems.length > 0) {
+        return (
+            props.state.currentListItems.map((item, index) => {
+                return (
+                    <div class="list-item">
+                        <div class="type">
+                            {listItemState}
+                        </div>
+                        <div class="listTitle">
+                            {item.itemTitle}
+                        </div>
+                        <div class="listBody">
+                            {item.caption}
+                        </div>
+                        <div class="complete" onClick={
+                            async (e) => {
+                                console.log(item._id);
+                                if (props.state.currentState == 0) {//NEEDS TESTING!!!!!!!
+                                    const payload = { ID: item._id };
+                                    const response = await axios.post('/api/edit-bucket', payload);
+                                    if (await response.status != 200) {
+                                        console.log('error editing this item idk');
+                                        return;
+                                    }
+                                    console.log('list item completed success');
+                                } else {
+                                    const payload = { ID: item._id };
+                                    const response = await axios.post('/api/edit-todo', payload);
+                                    if (await response.status != 200) {
+                                        console.log('error editing this item idk');
+                                        return;
+                                    }
+                                    console.log('list item completed success');
+                                }
+                            }
+                        }>{
+                                item.completed
+                                    ? <FontAwesomeIcon icon={faCheckSquare} />
+                                    : <FontAwesomeIcon icon={faCheckSquare} />
+                            }</div>
+                        <div class="removeListItem" onClick={
+                            async (e) => {
+                                console.log(item._id)
+                                if (props.state.currentState == 0) {
+                                    const payload = {ID: item._id};
+                                    const response = await axios.post('/api/delete-bucket', payload);
+                                    if(await response.status != 200){
+                                        console.log("error deleting this item idk");
+                                        return;
+                                    }
+                                    props.deleteItem();
+                                    console.log("delete item complete success");
+                                }else {
+                                    const payload = {ID: item._id};
+                                    const reponse = await axios.post('/api/delete-todo', payload);
+                                    if(await response.status != 200){
+                                        console.log("error deleting this item idk");
+                                        return;
+                                    }
+                                    props.state.currentListItems.splice(index,1);
+                                    console.log('delete item complete sucess');
+                                }
+                            }
+                        }><FontAwesomeIcon icon={faTrash} /></div>
+                    </div>
+                )
+            })
+        )
+    }
+    return (
+        <>
+        </>
+    )
+}
   const [state, setState] = useState({
     searchQuery : "",
     currentListItems : [],
@@ -42,11 +126,16 @@ function Home(props){
   const getAllListItems = async () => {
     const payload = {userID:localUserID};
     const response = await axios.post('/api/all-buckets',payload);
+    if(response.status==500){
+      responseListItems = []
+    }
+    else{
     var responseListItems = response.data.results;
+    }
     console.log(responseListItems);
     setState(prevState => ({
       ...prevState,
-      currentListItems:responseListItems,
+      currentListItems:responseListItems
     }))
   }
 
@@ -123,7 +212,7 @@ function Home(props){
       <div onChange={handleRadio}>
         <input type="radio" value='0' class="listTypeButton btn-check" name="options" id="option1" autocomplete="off"></input><label class="btn btn-secondary" for="option1">Bucket</label> <input type="radio" class="btn-check listTypeButton" name="options" value='1' id="option2" autocomplete="off"></input><label class="btn btn-secondary" for="option2">Todo</label>
       </div>
-    </div><button type="button" disabled={!addState.addTitle} class="btn addItemButton" onClick={addItemToList}>Add</button>
+    </div><button type="button" disabled={!addState.addTitle.replace(/\s/g,'')} class="btn addItemButton" onClick={addItemToList}>Add</button>
   </div>
   <div class="sidenav">
     <div class="sidebar-header">
@@ -158,7 +247,7 @@ function Home(props){
   </div>
   <div class="content">
     <input type="text" class="form-control searchBar" placeholder="Search..."></input>
-    <ListContainer state={state}/>
+    <ListContainer state={state} deleteItem={getAllListItems}/>
   </div>
 </div>
       </body>

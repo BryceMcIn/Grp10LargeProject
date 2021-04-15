@@ -166,10 +166,11 @@ html body{
   font-size:18px;
 }
 .complete {
-  margin-top:-33px;
+  margin-top:-53px;
   float:right;
-  margin-right:20px;
+  margin-right:30px;
   color:#133B5C;
+  font-size:80px;
 }
 .content {
   margin-left:300px;
@@ -184,8 +185,8 @@ html body{
   margin-bottom:20px;
 }
 .removeListItem {
-  margin-top:-48px;
+  margin-top:-45px;
+  margin-right:-96px;
   float:right;
-  margin-right:-86px;
   color:gray;
 }

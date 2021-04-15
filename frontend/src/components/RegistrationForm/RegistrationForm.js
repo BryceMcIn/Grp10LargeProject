@@ -89,7 +89,7 @@ function RegistrationForm(props) {
                     <label htmlFor="lastName">First Name</label>
                     <input type="text" 
                         className="form-control" 
-                        id="lasttName" 
+                        id="lastName" 
                         placeholder="Last Name"
                         value={state.lastName}
                         onChange={handleChange} 
@@ -102,7 +102,7 @@ function RegistrationForm(props) {
                         className="form-control" 
                         id="username" 
                         placeholder="Username"
-                        value={state.lastName}
+                        value={state.username}
                         onChange={handleChange} 
                     />
                 </div>
