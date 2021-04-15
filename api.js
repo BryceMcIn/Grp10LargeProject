@@ -735,4 +735,136 @@ app.post('/api/search-todo', async (req, res, next) =>
     res.status(200).json(ret);
 });
 
+//change the login username
+app.post('/api/change-login', async (req, res, next) =>    
+{
+    ObjectId = require('mongodb').ObjectID;
+    const { userID, login, newLogin, password} = req.body;
+    var error = '';
+    var id = -1;  
+    var fn = '';  
+    var ln = '';
+    var em = '';
+    var ver = false; 
+    var emTok = '';
+    const db = client.db();  
+    const results = await db.collection('Users').find({_id:new ObjectId(userID),login:login,password:sha256(password)}).toArray();
+    if (results.length < 1)
+    {
+        error = "Invalid username/password combination"
+        var ret = { error: error };      
+        res.status(500).json(ret);
+    }
+    id = results[0]._id;
+    var fn = results[0].firstName;  
+    var ln = results[0].lastName;
+    var em = results[0].email;
+    var ver = results[0].isVerified; 
+    var emTok = results[0].emailTok;
+
+    try{
+        var myquery = { _id: new ObjectId(id)};
+        const db = client.db();  
+        var newvalues = { $set: {_id:id, firstName:fn, lastName:ln, login:newLogin, email:em, emailTok:emTok, password:sha256(password), isVerified:ver } };
+        db.collection('Users').updateOne(myquery, newvalues);
+        
+        var ret = { error: error };      
+    res.status(200).json(ret);
+    } catch (er)
+    {
+        error = er.toString();
+        console.log(error);
+        var ret = {error:error}
+        res.status(500).json(ret);
+}
+});
+
+//change the email for a user
+app.post('/api/change-email', async (req, res, next) =>    
+{
+    ObjectId = require('mongodb').ObjectID;
+    const { userID, email, newEmail, password} = req.body;
+    var error = '';
+    var id = -1;  
+    var fn = '';  
+    var ln = '';
+    var lg = '';
+    var ver = false; 
+    var emTok = '';
+    const db = client.db();  
+    const results = await db.collection('Users').find({_id:new ObjectId(userID),email:email,password:sha256(password)}).toArray();
+    if (results.length < 1)
+    {
+        error = "Invalid email/password combination"
+        var ret = { error: error };      
+        res.status(500).json(ret);
+    }
+    id = results[0]._id;
+    var fn = results[0].firstName;  
+    var ln = results[0].lastName;
+    var lg = results[0].login;
+    var ver = results[0].isVerified; 
+    var emTok = results[0].emailTok;
+
+    try{
+        var myquery = { _id: new ObjectId(id)};
+        const db = client.db();  
+        var newvalues = { $set: {_id:id, firstName:fn, lastName:ln, login:lg, email:newEmail, emailTok:emTok, password:sha256(password), isVerified:ver } };
+        db.collection('Users').updateOne(myquery, newvalues);
+        
+        var ret = { error: error };      
+    res.status(200).json(ret);
+    } catch (er)
+    {
+        error = er.toString();
+        console.log(error);
+        var ret = {error:error}
+        res.status(500).json(ret);
+}
+});
+
+//change the password for a user
+app.post('/api/change-password', async (req, res, next) =>    
+{
+    ObjectId = require('mongodb').ObjectID;
+    const { userID, login, password, newPassword } = req.body;
+    var error = '';
+    var id = -1;  
+    var fn = '';  
+    var ln = '';
+    var em = '';
+    var ver = false; 
+    var emTok = '';
+    const db = client.db();  
+    const results = await db.collection('Users').find({_id:new ObjectId(userID),login:login,password:sha256(password)}).toArray();
+    if (results.length < 1)
+    {
+        error = "Invalid email/password combination"
+        var ret = { error: error };      
+        res.status(500).json(ret);
+    }
+    id = results[0]._id;
+    var fn = results[0].firstName;  
+    var ln = results[0].lastName;
+    var em = results[0].email;
+    var ver = results[0].isVerified; 
+    var emTok = results[0].emailTok;
+
+    try{
+        var myquery = { _id: new ObjectId(id)};
+        const db = client.db();  
+        var newvalues = { $set: {_id:id, firstName:fn, lastName:ln, login:login, email:em, emailTok:emTok, password:sha256(newPassword), isVerified:ver } };
+        db.collection('Users').updateOne(myquery, newvalues);
+        
+        var ret = { error: error };      
+    res.status(200).json(ret);
+    } catch (er)
+    {
+        error = er.toString();
+        console.log(error);
+        var ret = {error:error}
+        res.status(500).json(ret);
+}
+});
+
 }
