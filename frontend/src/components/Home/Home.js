@@ -15,6 +15,7 @@ function Home(props){
 
   function ListContainer(props) {
 
+    if (props.state != undefined && props.state.currentListItems != undefined){
     var listItemState = '';
     if (props.state.currentState === 0) {
         listItemState = "Bucket List";
@@ -55,12 +56,14 @@ function Home(props){
                                         return;
                                     }
                                     console.log('list item completed success');
+                                    props.deleteItem()
+
                                 }
                             }
                         }>{
                                 item.completed
                                     ? <FontAwesomeIcon icon={faCheckSquare} />
-                                    : <FontAwesomeIcon icon={faCheckSquare} />
+                                    : <FontAwesomeIcon icon={faSquare} />
                             }</div>
                         <div class="removeListItem" onClick={
                             async (e) => {
@@ -72,7 +75,6 @@ function Home(props){
                                         console.log("error deleting this item idk");
                                         return;
                                     }
-                                    props.deleteItem();
                                     console.log("delete item complete success");
                                 }else {
                                     const payload = {ID: item._id};
@@ -84,13 +86,15 @@ function Home(props){
                                     props.state.currentListItems.splice(index,1);
                                     console.log('delete item complete sucess');
                                 }
+                                props.deleteItem();
                             }
                         }><FontAwesomeIcon icon={faTrash} /></div>
                     </div>
-                )
+                ) 
             })
         )
     }
+  }
     return (
         <>
         </>
@@ -120,10 +124,59 @@ function Home(props){
   //END OF TOKEN CRAP
 
   useEffect(() => {
-    getAllListItems();
-  }, []);
+    searchListItems();
+  }, [state.searchQuery,state.currentState]);
 
-  const getAllListItems = async () => {
+  
+  //handle change template
+  const handleSearchChange = (e) => {
+    const {id,value} = e.target;
+    console.log(state);
+    setState(prevState => ({
+      ...prevState,
+      searchQuery:value
+    }))
+  }
+  
+  const handleWebpageStateChange = (e) => {
+    setState(prevState => ({
+      ...prevState,
+      currentState:Number(!state.currentState),
+      currentListItems:[]
+    }))
+  } 
+
+  //search list items
+  const searchListItems = async () => {
+    if(state.currentState == 0){
+      const payload = {userId:localUserID, search:state.searchQuery};
+      axios.post('/api/search-bucket', payload).then(res =>{
+        setState(prevState => ({
+          ...prevState,
+          currentListItems: res.data.results
+        }))
+      })
+      .catch(err =>{
+        console.log(err);
+      })
+    }
+    else{
+      const payload = {userId:localUserID, search:state.searchQuery};
+      axios.post('/api/search-todo', payload).then(res =>{
+        setState(prevState => ({
+          ...prevState,
+          currentListItems: res.data.results
+        }))
+      })
+      .catch(err =>{
+        console.log(err);
+      })
+    }
+  }
+
+
+  //load all list items [ADD TODO]
+  const getAllListItems = async () => {//YUCK! SUCKS BIG OL PEENIE
     const payload = {userID:localUserID};
     const response = await axios.post('/api/all-buckets',payload);
     if(response.status==500){
@@ -139,6 +192,7 @@ function Home(props){
     }))
   }
 
+  //add list items
   const addItemToList = async () => {
     if (addState.currentAddState == 0){
       const payload = {userID:localUserID,itemTitle:addState.addTitle,caption:addState.addDesc};
@@ -172,6 +226,7 @@ function Home(props){
     }
   }
 
+  //handle change template
   const handleChange = (e) => {
     const {id , value} = e.target   
     setAddState(prevState => ({
@@ -180,6 +235,7 @@ function Home(props){
     }))
   }
 
+  //handle the radio buttons
   const handleRadio = (e) => {
     const {value} = e.target
     setAddState(prevState => ({
@@ -221,11 +277,23 @@ function Home(props){
     <div class="user-name">
       {firstName} {lastName}
     </div>
-    <div class="sidebar-item">
+    <div class="sidebar-item" 
+    onClick={
+      () => {handleWebpageStateChange()}
+    }
+    style={{
+      color: state.currentState ? "white" : "#FFC856"
+    }}>
       <FontAwesomeIcon icon={faFill}/>
       Bucket List
     </div>
-    <div class="sidebar-item">
+    <div class="sidebar-item" 
+    onClick={
+      () => {handleWebpageStateChange()}
+    }
+    style={{
+      color: state.currentState ? "#FFC856" : "white"
+    }}>
     <FontAwesomeIcon icon={faList}/>
       Todo List
     </div>
@@ -246,8 +314,8 @@ function Home(props){
     </div>
   </div>
   <div class="content">
-    <input type="text" class="form-control searchBar" placeholder="Search..."></input>
-    <ListContainer state={state} deleteItem={getAllListItems}/>
+    <input type="text" class="form-control searchBar" onChange={handleSearchChange} placeholder="Search..."></input>
+    <ListContainer state={state} deleteItem={searchListItems}/>
   </div>
 </div>
       </body>

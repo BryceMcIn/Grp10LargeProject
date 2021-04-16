@@ -95,13 +95,22 @@ html body{
   margin-bottom:40px;
 }
 .sidebar-item {
+  margin:0 auto;
+  background-color:#133B5C;
+  border-radius:10px;
+  padding-top:10px;
+  margin-right:30px;
+  margin-left:30px;
   margin-top:30px;
   font-family:Montserrat;
   font-weight:bold;
   font-size: 20px;
   color: #ffffff;
-  text-align:left;
-  padding-left:80px;
+  text-align:center;
+  padding-bottom:10px;
+  border: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
 }
 .sidebar-bottom{
   padding-bottom:10px;
@@ -115,6 +124,7 @@ html body{
   position:absolute;
 }
 .searchBar{
+  color:white;
   font-family:Montserrat;
   width:50%;
   font-size:20px;
