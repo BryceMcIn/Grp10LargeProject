@@ -207,7 +207,7 @@ function Home(props){
         addTitle:"",
         addDesc:""
       }));
-      getAllListItems();
+      searchListItems();
     }
     else{
       const payload = {userID:localUserID,itemTitle:addState.addTitle};
@@ -222,7 +222,7 @@ function Home(props){
         addTitle:"",
         addDesc:""
       }));
-      getAllListItems();
+      searchListItems();
     }
   }
 
