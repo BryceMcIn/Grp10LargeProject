@@ -709,7 +709,7 @@ app.post('/api/search-todo', async (req, res, next) =>
     const { userId, search } = req.body;
     var _search = search.trim();
     const db = client.db();
-    const results = await db.collection('Bucket').find({"itemTitle":{$regex:_search+'.*', $options:'r'},userID:userId}).toArray();
+    const results = await db.collection('To Do').find({"itemTitle":{$regex:_search+'.*', $options:'r'},userID:userId}).toArray();
     var _ret = [];
     if (results.length < 1)
     {
