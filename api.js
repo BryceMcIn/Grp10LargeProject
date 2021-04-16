@@ -88,13 +88,15 @@ exports.setApp = function( app, client)
                 {
                     await sgMail.send(msg);
                     //req.flash('success');
-                    res.redirect('/login');
+                    //res.redirect('/login');
+                    var ret = { error: error };      
+                    res.status(200).json(ret);
                 }
                 catch (er)
                 {
                     console.log(er);
                     //req.flash('an error has occured');
-                    req.redirect('/');
+                    //req.redirect('/');
                     error = er.toString();
                     var ret = { error: error };      
                     res.status(500).json(ret);
@@ -322,8 +324,8 @@ exports.setApp = function( app, client)
         if (results.length < 1)
         {
             error = "No requests"
-                var ret = { error: error };      
-                res.status(500).json(ret);
+            var ret = {results:_ret, error:error};      
+            res.status(200).json(ret);
         }
         else
         {
@@ -414,7 +416,7 @@ exports.setApp = function( app, client)
         {
             error = "No pending friend request found."
             var ret = { error: error };      
-            res.status(500).json(ret);
+            res.status(200).json(ret);
         }
     });
 
@@ -448,7 +450,7 @@ exports.setApp = function( app, client)
         {
             error = "No friend was found."
             var ret = { error: error };      
-            res.status(500).json(ret);
+            res.status(200).json(ret);
         }   
     });
 
@@ -483,8 +485,8 @@ exports.setApp = function( app, client)
     if (x == 0)
     {
         error = "No friends were found for this account"
-            var ret = { error: error };      
-            res.status(500).json(ret);
+        var ret = {results:_ret, error:error};      
+        res.status(200).json(ret);
     }
     else
     {
@@ -526,8 +528,8 @@ exports.setApp = function( app, client)
         if (results.length < 1)
         {
             error = "No bucket list items found"
-                var ret = { error: error };      
-                res.status(500).json(ret);
+            var ret = {results:results, error:error};       
+            res.status(200).json(ret);
         }
         else
         {
@@ -566,14 +568,21 @@ exports.setApp = function( app, client)
      app.post('/api/edit-bucket', async (req, res, next) =>    
      { 
         ObjectId = require('mongodb').ObjectID;
-        const { ID, itemTitle, caption, completed} = req.body;
+        const { ID } = req.body;
         var error = '';
-
+        var comp = '';
         var myquery = { _id: new ObjectId(ID)};
-        const db = client.db();  
-        var newvalues = { $set: {itemTitle: itemTitle, caption: caption, completed:completed } };
+        const db = client.db();
+        const results = await db.collection('Bucket').find({_id:new ObjectId(ID)}).toArray();
+        if (results[0].completed == true)
+        {
+            comp = false
+        }
+        else{
+            comp = true;
+        }
+        var newvalues = { $set: {completed:comp} };
         db.collection('Bucket').updateOne(myquery, newvalues);
-
         var ret = { error: error };      
         res.status(200).json(ret);
     });
@@ -612,8 +621,8 @@ exports.setApp = function( app, client)
        if (results.length < 1)
        {
            error = "No to do list items found"
-               var ret = { error: error };      
-               res.status(204).json(ret);
+           var ret = {results:results, error:error};       
+           res.status(200).json(ret);
        }
        else
        {
@@ -654,47 +663,24 @@ exports.setApp = function( app, client)
     //edit a to do list item / mark as complete
     app.post('/api/edit-todo', async (req, res, next) =>    
     { 
-        ObjectId = require('mongodb').ObjectID;
-        const { ID, itemTitle, completed} = req.body;
-        var error = '';
-        try{
-            var myquery = { _id: new ObjectId(ID)};
-            const db = client.db();  
-            var newvalues = { $set: {itemTitle: itemTitle, completed:completed } };
-            db.collection('To Do').updateOne(myquery, newvalues);
-            
-            var ret = { error: error };      
-        res.status(200).json(ret);
-        } catch (er)
-        {
-            error = er.toString();
-            console.log(error);
-            var ret = {error:error}
-            res.status(500).json(ret);
-    }
-   });
-
-   app.post('/api/mark-completed-todo', async (req,res,next) =>
-   {
-        const{itemTitle,userID,completed} = req.body;
-        var error = '';
-        const db = client.db();
-        try {
-            var myQuery = {itemTitle:itemTitle,userID:userID};
-            var newVal = {$set:{completed:completed}};
-            db.collection('To Do').updateOne(myQuery,newVal,function(err,res){
-                if (err) throw err;
-                console.log("Collection Item Updated");
-            });
-            var ret = {error:error};
-            res.status(200).json(ret);
-        } catch (er) 
-        {
-            error = er.toString();
-            console.log(error);
-            var ret = {error:error};
-            res.status(500).json(ret);
-        }
+       ObjectId = require('mongodb').ObjectID;
+       const { ID } = req.body;
+       var error = '';
+       var comp = '';
+       var myquery = { _id: new ObjectId(ID)};
+       const db = client.db();
+       const results = await db.collection('To Do').find({_id:new ObjectId(ID)}).toArray();
+       if (results[0].completed == true)
+       {
+           comp = false
+       }
+       else{
+           comp = true;
+       }
+       var newvalues = { $set: {completed:comp} };
+       db.collection('To Do').updateOne(myquery, newvalues);
+       var ret = { error: error };      
+       res.status(200).json(ret);
    });
 
    //search for a bucket list
@@ -704,13 +690,13 @@ app.post('/api/search-bucket', async (req, res, next) =>
     const { userId, search } = req.body;
     var _search = search.trim();
     const db = client.db();
-    const results = await db.collection('Bucket').find({"itemTitle":{$regex:_search+'.*', $options:'r'}}).toArray();
+    const results = await db.collection('Bucket').find({"itemTitle":{$regex:_search+'.*', $options:'r'},userID:userId}).toArray();
     var _ret = [];
     if (results.length < 1)
     {
         error = "No bucket list items found"
-        var ret = { error: error };      
-        res.status(500).json(ret);
+        var ret = {results:results, error:error};       
+        res.status(200).json(ret);
     }
     var ret = {results:results, error:error};
     res.status(200).json(ret);
@@ -723,13 +709,13 @@ app.post('/api/search-todo', async (req, res, next) =>
     const { userId, search } = req.body;
     var _search = search.trim();
     const db = client.db();
-    const results = await db.collection('To Do').find({"itemTitle":{$regex:_search+'.*', $options:'r'}}).toArray();
+    const results = await db.collection('Bucket').find({"itemTitle":{$regex:_search+'.*', $options:'r'},userID:userId}).toArray();
     var _ret = [];
     if (results.length < 1)
     {
         error = "No todo list items found"
-        var ret = { error: error };      
-        res.status(500).json(ret);
+        var ret = {results:results, error:error};       
+        res.status(200).json(ret);
     }
     var ret = {results:results, error:error};
     res.status(200).json(ret);
