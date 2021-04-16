@@ -78,7 +78,7 @@ function Home(props){
                                     console.log("delete item complete success");
                                 }else {
                                     const payload = {ID: item._id};
-                                    const reponse = await axios.post('/api/delete-todo', payload);
+                                    const response = await axios.post('/api/delete-todo', payload);
                                     if(await response.status != 200){
                                         console.log("error deleting this item idk");
                                         return;
