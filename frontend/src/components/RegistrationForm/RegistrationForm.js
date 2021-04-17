@@ -27,6 +27,9 @@ function RegistrationForm(props) {
             const payload={
                 "email":state.email,
                 "password":state.password,
+                "firstName":state.firstName,
+                "lastName":state.lastName,
+                "login":state.username
             }
             axios.post('/api/register', payload)
                 .then(function (response) {
