@@ -260,6 +260,7 @@ exports.setApp = function( app, client)
     app.post('/api/fr-request', async (req, res, next) =>    
     {      // incoming: sender Id, reciever Id      // outgoing: error/no error     
         const { senderID, login } = req.body;      
+        ObjectId = require('mongodb').ObjectID;
         var error = '';
         var recieverID;
         const db = client.db();
@@ -268,7 +269,7 @@ exports.setApp = function( app, client)
         { 
             error = "The username specified does not exist."
             var ret = { error: error };      
-            res.status(500).json(ret);
+            res.status(200).json(ret);
         }
         recieverID = results2[0]._id;
         recieverID = recieverID.toString();
@@ -280,13 +281,13 @@ exports.setApp = function( app, client)
         { 
             error = "There is an existing friend request or friendship already."
             var ret = { error: error };      
-            res.status(500).json(ret);
+            res.status(200).json(ret);
         }
         else if( results1.length > 0 )  
         { 
             error = "There is an existing friend request or friendship already."
             var ret = { error: error };      
-            res.status(500).json(ret);
+            res.status(200).json(ret);
         }
         else
         {
@@ -307,25 +308,32 @@ exports.setApp = function( app, client)
     //Query All Friend Request for Users
     app.post('/api/all-requests', async (req, res, next) => 
     {  
-        // incoming: userId // outgoing: list of all friendIDs which are pending a request, error 
+        // incoming: userId // outgoing: list of all friendIDs which are pending a request, error
+        ObjectId = require('mongodb').ObjectID;
+        const { userID } = req.body;  
         var error = '';
         var x = 0;
         var i;
-        const { userID } = req.body;  
         const db = client.db();  
-        const results = await db.collection('Request').find({senderID:userID}).toArray();
-        const results1 = await db.collection('Request').find({recieverID:userID}).toArray();
+        const results = await db.collection('Request').find({recieverID:userID}).toArray();
         var _ret = [];
-        for (i=0; i<results.length;i++)
-        {
-            results.push(results1[x]);
-            x++;
+        if( results.length > 0 )  
+        {    
+            for (i =0; i<results.length;i++)
+            {
+                const db = client.db();  
+                const results3 = await db.collection('Users').find({_id:new ObjectId(results[i].senderID)}).toArray();
+
+                _ret.push(results[i].senderID);
+                _ret.push(results3[0].login);
+                x++;
+            }
         }
-        if (results.length < 1)
+        if (_ret.length < 1)
         {
             error = "No requests"
-            var ret = {results:_ret, error:error};      
-            res.status(200).json(ret);
+                var ret = { error: error };      
+                res.status(200).json(ret);
         }
         else
         {
@@ -341,11 +349,10 @@ exports.setApp = function( app, client)
         const newFriend = {userID:userID,friendID:friendID};
         var error = '';
             const db = client.db();  
-            const results = await db.collection('Request').find({senderID:userID,recieverID:friendID}).toArray();
             const results1 = await db.collection('Request').find({senderID:friendID,recieverID:userID}).toArray();
-            if( results.length > 0 )
+            if( results1.length > 0 )
             {
-            const removePending = {senderID:userID,recieverID:friendID}; 
+            const removePending = {senderID:friendID,recieverID:userID}; 
             if (status == "A") 
             {
                 try      
@@ -354,40 +361,6 @@ exports.setApp = function( app, client)
                         const result = db.collection('Friends').insertOne(newFriend);
                         const result1 = db.collection('Request').remove(removePending);  
                         
-                }      
-                catch(e)      
-                {        
-                    error = e.toString();      
-                }         
-                var ret = { error: error };      
-                res.status(200).json(ret);
-            }
-            else
-            {
-                try      
-                {        
-                        const db = client.db();        
-                        const result1 = db.collection('Request').remove(removePending);  
-                        
-                }      
-                catch(e)      
-                {        
-                    error = e.toString();      
-                }         
-                var ret = { error: error };      
-                res.status(200).json(ret);
-            }
-        }
-        else if( results1.length > 0 )
-        {
-            const removePending1 = {senderID:friendID,recieverID:userID}; 
-            if (status == "A") 
-            {
-                try      
-                {        
-                    const db = client.db();        
-                    const result = db.collection('Friends').insertOne(newFriend);
-                    const result1 = db.collection('Request').remove(removePending1);
                 }      
                 catch(e)      
                 {        
@@ -458,6 +431,7 @@ exports.setApp = function( app, client)
     app.post('/api/fr-allfriends', async (req, res, next) => 
     {  
         // incoming: userId // outgoing: list of ids, error 
+        ObjectId = require('mongodb').ObjectID;
         var error = '';
         var x = 0;
         var i;
@@ -466,11 +440,16 @@ exports.setApp = function( app, client)
         const results = await db.collection('Friends').find({userID:userID}).toArray();
         const results1 = await db.collection('Friends').find({friendID:userID}).toArray();
         var _ret = [];  
+        //new ObjectId(results[i].friendID)
         if( results.length > 0 )  
         {    
             for (i =0; i<results.length;i++)
             {
+                const db = client.db();  
+                const results3 = await db.collection('Users').find({_id:new ObjectId(results[i].friendID)}).toArray();
+
                 _ret.push(results[i].friendID);
+                _ret.push(results3[0].login);
                 x++;
             }
         }
@@ -478,7 +457,11 @@ exports.setApp = function( app, client)
         {
             for (i =0; i<results1.length;i++)
             {
+                const db = client.db();  
+                const results3 = await db.collection('Users').find({_id:new ObjectId(results1[i].friendID)}).toArray();
+
                 _ret.push(results1[i].userID);
+                _ret.push(results3[0].login);
                 x++;
             }
         }
