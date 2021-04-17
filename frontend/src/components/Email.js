@@ -20,15 +20,24 @@ function Email(props) {
     }));
   };
 
+  const jwt = require("jsonwebtoken");
+  var storage = require("../tokenStorage.js");
+
+  var tok = storage.retrieveToken();
+  var ud = jwt.decode(tok, { json: true });
+
+  var localUserID = ud.userID;
+
   const handleSubmitClick = (e) => {
     e.preventDefault();
     const payload = {
+      userID: localUserID,
       email: state.email,
       newEmail: state.newEmail,
       password: state.password,
     };
     axios
-      .post("/api/change-email", payload)
+      .post("https://letsbuckit.herokuapp.com/api/change-email", payload)
       .then(function (response) {
         if (response.status === 200) {
           setState((prevState) => ({
@@ -63,22 +72,22 @@ function Email(props) {
             <div className="form-inner">
               <h2>Update Email</h2>
               <div class="form-group">
-                <label htmlFor="newEmail">New Email</label>
-                <input
-                  type="text"
-                  name="newEmail"
-                  id="newEmail"
-                  value={state.newEmail}
-                  onChange={handleChange}
-                />
-              </div>
-              <div class="form-group">
-                <label htmlFor="oldEmail">Old Email</label>
+                <label htmlFor="newEmail"> Email </label>
                 <input
                   type="text"
                   name="email"
                   id="email"
                   value={state.email}
+                  onChange={handleChange}
+                />
+              </div>
+              <div class="form-group">
+                <label htmlFor="oldEmail">New Email</label>
+                <input
+                  type="text"
+                  name="newEmail"
+                  id="newEmail"
+                  value={state.newEmail}
                   onChange={handleChange}
                 />
               </div>

@@ -7,9 +7,8 @@ import "./Email.css";
 function Password(props) {
   // local details
   const [state, setState] = useState({
-    email: "",
-    currentPassword: "",
-    confirmPassword: "",
+    login: "",
+    password: "",
     newPassword: "",
     successMessage: null,
   });
@@ -20,18 +19,24 @@ function Password(props) {
       [id]: value,
     }));
   };
+  const jwt = require("jsonwebtoken");
+  var storage = require("../tokenStorage.js");
+
+  var tok = storage.retrieveToken();
+  var ud = jwt.decode(tok, { json: true });
+
+  var localUserID = ud.userID;
 
   const handleSubmitClick = (e) => {
     e.preventDefault();
     const payload = {
-      //needs to be changed to email maybe.
-      email: state.email,
-      currentPassword: state.currentPassword,
-      confirmPassword: state.confirmPassword,
+      userID: localUserID,
+      login: state.login,
+      password: state.password,
       newPassword: state.newPassword,
     };
     axios
-      .post(API_BASE_URL + "/api/login", payload)
+      .post("https://letsbuckit.herokuapp.com/api/change-password", payload)
       .then(function (response) {
         if (response.status === 200) {
           setState((prevState) => ({
@@ -66,32 +71,32 @@ function Password(props) {
             <div className="form-inner">
               <h2>Update Password</h2>
               <div class="form-group">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="login">Login</label>
                 <input
                   type="text"
-                  name="email"
-                  id="email"
-                  value={state.email}
+                  name="login"
+                  id="login"
+                  value={state.login}
                   onChange={handleChange}
                 />
               </div>
               <div class="form-group">
-                <label htmlFor="currentPassword">Current Password</label>
+                <label htmlFor="currentPassword">Password</label>
                 <input
-                  type="text"
-                  name="currentPassword"
-                  id="currentPassword"
-                  value={state.currentPassword}
+                  type="password"
+                  name="password"
+                  id="password"
+                  value={state.password}
                   onChange={handleChange}
                 />
               </div>
               <h3>To verify your identity, please enter your password</h3>
               <div class="form-group">
-                <label htmlFor=" newPassword">New Password</label>
+                <label htmlFor="newPassword">New Password</label>
                 <input
                   type="password"
-                  name=" newPassword"
-                  id=" newPassword"
+                  name="newPassword"
+                  id="newPassword"
                   value={state.newPassword}
                   onChange={handleChange}
                 />
