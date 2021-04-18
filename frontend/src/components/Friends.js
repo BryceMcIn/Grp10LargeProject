@@ -89,20 +89,23 @@ function Friends() {
           {friendReq.map((item) => {
             return (
               <Grid item={2}>
+                <div>{item.bucketList.itemTitle}</div>
                 <Card className={classes.root}>
                   <CardContent>
                     <Typography
                       className={classes.title}
                       color="textSecondary"
                       gutterBottom
-                    ></Typography>
+                    >
+                      {item.caption}
+                    </Typography>
                     <Typography variant="h5" component="h2">
                       {item.login}
+                      {item.bucketList.itemTitle}
                     </Typography>
                     <Typography variant="body2" component="p">
                       {item.friendID}
                     </Typography>
-                    {item.itemTitle}
                   </CardContent>
                   <CardActions>
                     <button className="delete" onClick={() => deleteFriend()}>

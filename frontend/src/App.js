@@ -61,14 +61,14 @@ function App() {
           <Route path="/recoverPassword">
             <RecoverPassword />
           </Route>
-          <PrivateRoute path="/home">
-            <Home />
-          </PrivateRoute>
-          <PrivateRoute path="/home">
-            <Home />
-          </PrivateRoute>
-          <PrivateRoute path="/navbar">
+          <Route path="/navbar">
             <Navbar />
+          </Route>
+          <PrivateRoute path="/home">
+            <Home />
+          </PrivateRoute>
+          <PrivateRoute path="/home">
+            <Home />
           </PrivateRoute>
         </Switch>
 

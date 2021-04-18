@@ -379,11 +379,16 @@ function Home(props) {
 
               <div class="sidebar-item">
                 <FontAwesomeIcon icon={faCog} />
-                <Link target={"_blank"} to="/navbar">
+                <Link to="/navbar">
                   <span className="linktext">Settings</span>
                 </Link>
                 <Switch>
-                  <Route path="/navbar" component={navbar} exact={true} />
+                  <Route
+                    target={"_blank"}
+                    path="/navbar"
+                    component={navbar}
+                    exact={true}
+                  />
                 </Switch>
               </div>
               <div class="sidebar-item">
