@@ -85,6 +85,7 @@ function RegistrationForm(props) {
   return (
     <Route>
       <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
+        <img src="/circlesmall.png" />
         <form>
           {/* This is for the First Name */}
           <div className="form-group text-left">
