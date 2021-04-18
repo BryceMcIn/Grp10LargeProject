@@ -96,10 +96,13 @@ function Friends() {
                       color="textSecondary"
                       gutterBottom
                     ></Typography>
-                    <Typography variant="h5" component="h2"></Typography>
-                    <Typography variant="body2" component="p">
-                      {item}
+                    <Typography variant="h5" component="h2">
+                      {item.login}
                     </Typography>
+                    <Typography variant="body2" component="p">
+                      {item.friendID}
+                    </Typography>
+                    {item.itemTitle}
                   </CardContent>
                   <CardActions>
                     <button className="delete" onClick={() => deleteFriend()}>

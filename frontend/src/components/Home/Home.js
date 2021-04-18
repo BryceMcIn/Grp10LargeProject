@@ -3,7 +3,7 @@ import axios from "axios";
 import friends from "../Friends";
 import navbar from "../Navbar";
 import "./home.css";
-import { Route, withRouter, Link, Switch } from "react-router-dom";
+import { Route, withRouter, Link, Switch, useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFill } from "@fortawesome/free-solid-svg-icons";
 import { faList } from "@fortawesome/free-solid-svg-icons";
@@ -110,6 +110,7 @@ function Home(props) {
     }
     return <></>;
   }
+
   const [state, setState] = useState({
     searchQuery: "",
     currentListItems: [],
@@ -122,6 +123,12 @@ function Home(props) {
     currentAddState: 0,
   });
 
+  const history = useHistory();
+  function logOut() {
+    localStorage.clear();
+    history.push("/login");
+    console.log(localStorage);
+  }
   const jwt = require("jsonwebtoken");
   var storage = require("../../tokenStorage.js");
 
@@ -380,7 +387,12 @@ function Home(props) {
                 </Switch>
               </div>
               <div class="sidebar-item">
-                <FontAwesomeIcon icon={faSignOutAlt} />
+                <FontAwesomeIcon
+                  onClick={() => {
+                    logOut();
+                  }}
+                  icon={faSignOutAlt}
+                />
                 Sign-Out
               </div>
               <div class="sidebar-bottom">
