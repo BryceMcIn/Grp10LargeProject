@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE_URL, ACCESS_TOKEN_NAME } from "../constants/apiConstants.js";
-
+import navbar from "./Navbar.js";
+import { Route, withRouter, Link, Switch } from "react-router-dom";
 import "./Email.css";
 
 function Password(props) {
@@ -106,6 +107,14 @@ function Password(props) {
                 value="Save Changes"
                 onClick={handleSubmitClick}
               />
+              <button style={{ marginLeft: 20 }} className="button">
+                <Link to="/navbar">
+                  <span className="linktext2">Back to Settings</span>
+                </Link>
+                <Switch>
+                  <Route path="/navbar" component={navbar} exact={true} />
+                </Switch>
+              </button>
             </div>
           </form>
         </div>

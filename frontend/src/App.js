@@ -67,9 +67,11 @@ function App() {
           <PrivateRoute path="/home">
             <Home />
           </PrivateRoute>
+          <PrivateRoute path="/navbar">
+            <Navbar />
+          </PrivateRoute>
         </Switch>
 
-        <Navbar />
         <AlertComponent
           errorMessage={errorMessage}
           hideError={updateErrorMessage}
