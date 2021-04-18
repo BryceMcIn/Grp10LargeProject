@@ -273,10 +273,10 @@ exports.setApp = function( app, client)
         }
         recieverID = results2[0]._id;
         recieverID = recieverID.toString();
-        const newFR = {senderID:senderID,recieverID:recieverID}; 
+        const newFR = {userID:senderID,friendID:recieverID}; 
 
-        const results = await db.collection('Request').find({senderID:senderID,recieverID:recieverID}).toArray();
-        const results1 = await db.collection('Request').find({senderID:recieverID,recieverID:senderID}).toArray();
+        const results = await db.collection('Friends').find({senderID:senderID,recieverID:recieverID}).toArray();
+        const results1 = await db.collection('Friends').find({senderID:recieverID,recieverID:senderID}).toArray();
         if( results.length > 0 )  
         { 
             error = "There is an existing friend request or friendship already."
@@ -294,7 +294,7 @@ exports.setApp = function( app, client)
             try      
             {        
                 const db = client.db();        
-                const result = db.collection('Request').insertOne(newFR);      
+                const result = db.collection('Friends').insertOne(newFR);      
             }      
             catch(e)      
             {        
@@ -408,14 +408,14 @@ exports.setApp = function( app, client)
         if( results.length > 0 )  
         {    
 
-            const result = db.collection('Friends').remove(FRemove); 
+            const result = db.collection('Friends').removeOne(FRemove); 
             var ret = { error: error };
             res.status(200).json(ret);
         }
         else if( results1.length > 0 )  
         {    
 
-            const result = db.collection('Friends').remove(FRemove1); 
+            const result = db.collection('Friends').removeOne(FRemove1); 
             var ret = { error: error };
             res.status(200).json(ret);
         }
@@ -435,6 +435,7 @@ exports.setApp = function( app, client)
         var error = '';
         var x = 0;
         var i;
+        var j;
         const { userID } = req.body;  
         const db = client.db();  
         const results = await db.collection('Friends').find({userID:userID}).toArray();
@@ -447,9 +448,23 @@ exports.setApp = function( app, client)
             {
                 const db = client.db();  
                 const results3 = await db.collection('Users').find({_id:new ObjectId(results[i].friendID)}).toArray();
-
-                _ret.push(results[i].friendID);
-                _ret.push(results3[0].login);
+                const results4 = await db.collection('Bucket').find({userID:results[i].friendID}).toArray();
+                var bucketList = [];
+                for (j = 0; j<results4.length; j++)
+                {
+                    bucketList.push({
+                        "itemTitle" : results4[j].itemTitle,
+                        "caption" : results4[j].caption
+                    })
+                }
+                const finalResult = {
+                    "friendID" : results[i].friendID,
+                    "login" : results3[0].login,
+                    "bucketList" : bucketList
+                };
+                // _ret.push(results[i].friendID);
+                // _ret.push(results3[0].login);
+                _ret.push(finalResult);
                 x++;
             }
         }
@@ -458,10 +473,25 @@ exports.setApp = function( app, client)
             for (i =0; i<results1.length;i++)
             {
                 const db = client.db();  
-                const results3 = await db.collection('Users').find({_id:new ObjectId(results1[i].friendID)}).toArray();
-
-                _ret.push(results1[i].userID);
-                _ret.push(results3[0].login);
+                const results3 = await db.collection('Users').find({_id:new ObjectId(results1[i].userID)}).toArray();
+                const results5 = await db.collection('Bucket').find({userID:results1[i].userID}).toArray();
+                var bucketList = [];
+                for (j = 0; j<results5.length; j++)
+                {
+                    // console.log(results5[j]);
+                    bucketList.push({
+                        "itemTitle" : results5[j].itemTitle,
+                        "caption" : results5[j].caption
+                    });
+                }
+                    const finalResult = {
+                    "friendID" : results1[i].userID,
+                    "login" : results3[0].login,
+                    "bucketList" : bucketList
+                };
+                // _ret.push(results1[i].userID);
+                // _ret.push(results3[0].login);
+                _ret.push(finalResult);
                 x++;
             }
         }
