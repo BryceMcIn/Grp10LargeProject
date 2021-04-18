@@ -78,7 +78,7 @@ function SendPass(props) {
 
               <input
                 type="submit"
-                value="Save Changes"
+                value="Send Email"
                 onClick={handleSubmitClick}
               />
             </div>
