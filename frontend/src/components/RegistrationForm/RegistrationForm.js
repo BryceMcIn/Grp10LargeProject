@@ -64,6 +64,10 @@ function RegistrationForm(props) {
     props.updateTitle("Login");
     props.history.push("/login");
   };
+
+  const redirectToRecovery = () => {
+    props.history.push("/sendPassword");
+  };
   const handleSubmitClick = (e) => {
     e.preventDefault();
     if (state.password === state.confirmPassword) {
@@ -173,6 +177,12 @@ function RegistrationForm(props) {
         <span className="loginText" onClick={() => redirectToLogin()}>
           Login here
         </span>
+        <div onClick={() => redirectToLogin()}>
+          Forgot password?
+          <span className="loginText" onClick={() => redirectToRecovery()}>
+            Reset Here
+          </span>
+        </div>
       </div>
     </div>
   );
