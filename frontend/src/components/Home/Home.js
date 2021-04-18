@@ -368,7 +368,9 @@ function Home(props) {
               <FontAwesomeIcon icon={faSignOutAlt} />
               Sign-Out
             </div>
-            <div class="sidebar-bottom">[insert graphic]Bucket List</div>
+            <div class="sidebar-bottom">
+              <img src="/circle-cropped.png" />
+            </div>
           </div>
           <div class="content">
             <input

@@ -13,6 +13,7 @@ import Friends from "./components/Friends";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import AlertComponent from "./components/AlertComponent/AlertComponent";
 import SendPass from "./components/SendPass";
+import RecoverPassword from "./components/RecoverPassword";
 function App() {
   const [title, updateTitle] = useState(null);
   const [errorMessage, updateErrorMessage] = useState(null);
@@ -56,6 +57,9 @@ function App() {
           </Route>
           <Route path="/sendPassword">
             <SendPass />
+          </Route>
+          <Route path="/recoverPassword">
+            <RecoverPassword />
           </Route>
           <PrivateRoute path="/home">
             <Home />
