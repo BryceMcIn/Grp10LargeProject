@@ -84,6 +84,7 @@ function Friends() {
               <Typography variant="body2" component="p">
                 {item}
               </Typography>
+              <button>Delete</button>
             </CardContent>
           </Card>
         );
