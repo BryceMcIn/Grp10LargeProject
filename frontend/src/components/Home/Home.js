@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import friends from "../Friends";
+import navbar from "../Navbar";
 import "./home.css";
-import { withRouter } from "react-router-dom";
+import { Route, withRouter, Link, Switch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFill } from "@fortawesome/free-solid-svg-icons";
 import { faList } from "@fortawesome/free-solid-svg-icons";
@@ -257,133 +259,147 @@ function Home(props) {
   };
 
   return (
-    <html lang="en">
-      <head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1"
-        ></meta>
-        <link rel="preconnect" href="https://fonts.gstatic.com"></link>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap"
-          rel="stylesheet"
-        ></link>
-      </head>
-      <body>
-        <div class="wrapper">
-          <div class="addItem">
-            <div class="addItem-header">Add to a list</div>
-            <div class="addItem-container">
-              <input
-                class="addItemTitle form-control"
-                id="addTitle"
-                type="text"
-                placeholder="Goal"
-                value={addState.addTitle}
-                onChange={handleChange}
-              ></input>
-              <textarea
-                class="addItemDesc form-control"
-                type="text"
-                id="addDesc"
-                placeholder="Describe your goal here!"
-                value={addState.addDesc}
-                onChange={handleChange}
-              ></textarea>
+    <Route>
+      <html lang="en">
+        <head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+          ></meta>
+          <link rel="preconnect" href="https://fonts.gstatic.com"></link>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap"
+            rel="stylesheet"
+          ></link>
+        </head>
+        <body>
+          <div class="wrapper">
+            <div class="addItem">
+              <div class="addItem-header">Add to a list</div>
+              <div class="addItem-container">
+                <input
+                  class="addItemTitle form-control"
+                  id="addTitle"
+                  type="text"
+                  placeholder="Goal"
+                  value={addState.addTitle}
+                  onChange={handleChange}
+                ></input>
+                <textarea
+                  class="addItemDesc form-control"
+                  type="text"
+                  id="addDesc"
+                  placeholder="Describe your goal here!"
+                  value={addState.addDesc}
+                  onChange={handleChange}
+                ></textarea>
+              </div>
+              <div class="buttonContainer">
+                <div>Which list?</div>
+                <div onChange={handleRadio}>
+                  <input
+                    type="radio"
+                    value="0"
+                    class="listTypeButton btn-check"
+                    name="options"
+                    id="option1"
+                    autocomplete="off"
+                  ></input>
+                  <label class="btn btn-secondary" for="option1">
+                    Bucket
+                  </label>{" "}
+                  <input
+                    type="radio"
+                    class="btn-check listTypeButton"
+                    name="options"
+                    value="1"
+                    id="option2"
+                    autocomplete="off"
+                  ></input>
+                  <label class="btn btn-secondary" for="option2">
+                    Todo
+                  </label>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={!addState.addTitle.replace(/\s/g, "")}
+                class="btn addItemButton"
+                onClick={addItemToList}
+              >
+                Add
+              </button>
             </div>
-            <div class="buttonContainer">
-              <div>Which list?</div>
-              <div onChange={handleRadio}>
-                <input
-                  type="radio"
-                  value="0"
-                  class="listTypeButton btn-check"
-                  name="options"
-                  id="option1"
-                  autocomplete="off"
-                ></input>
-                <label class="btn btn-secondary" for="option1">
-                  Bucket
-                </label>{" "}
-                <input
-                  type="radio"
-                  class="btn-check listTypeButton"
-                  name="options"
-                  value="1"
-                  id="option2"
-                  autocomplete="off"
-                ></input>
-                <label class="btn btn-secondary" for="option2">
-                  Todo
-                </label>
+            <div class="sidenav">
+              <div class="sidebar-header">Welcome,</div>
+              <div class="user-name">
+                {firstName} {lastName}
+              </div>
+              <div
+                class="sidebar-item"
+                onClick={() => {
+                  handleWebpageStateChange();
+                }}
+                style={{
+                  color: state.currentState ? "white" : "#FFC856",
+                }}
+              >
+                <FontAwesomeIcon icon={faFill} />
+                Bucket List
+              </div>
+              <div
+                class="sidebar-item"
+                onClick={() => {
+                  handleWebpageStateChange();
+                }}
+                style={{
+                  color: state.currentState ? "#FFC856" : "white",
+                }}
+              >
+                <FontAwesomeIcon icon={faList} />
+                Todo List
+              </div>
+
+              <div class="sidebar-item">
+                <FontAwesomeIcon icon={faUserFriends} />
+                <Link target={"_blank"} to="/friends">
+                  <span className="linktext"> Friends</span>
+                </Link>
+                <Switch>
+                  <Route path="/friends" component={friends} exact={true} />
+                </Switch>
+              </div>
+
+              <div class="sidebar-item">
+                <FontAwesomeIcon icon={faCog} />
+                <Link target={"_blank"} to="/navbar">
+                  <span className="linktext">Settings</span>
+                </Link>
+                <Switch>
+                  <Route path="/navbar" component={navbar} exact={true} />
+                </Switch>
+              </div>
+              <div class="sidebar-item">
+                <FontAwesomeIcon icon={faSignOutAlt} />
+                Sign-Out
+              </div>
+              <div class="sidebar-bottom">
+                <img src="/circle-cropped.png" />
               </div>
             </div>
-            <button
-              type="button"
-              disabled={!addState.addTitle.replace(/\s/g, "")}
-              class="btn addItemButton"
-              onClick={addItemToList}
-            >
-              Add
-            </button>
-          </div>
-          <div class="sidenav">
-            <div class="sidebar-header">Welcome,</div>
-            <div class="user-name">
-              {firstName} {lastName}
-            </div>
-            <div
-              class="sidebar-item"
-              onClick={() => {
-                handleWebpageStateChange();
-              }}
-              style={{
-                color: state.currentState ? "white" : "#FFC856",
-              }}
-            >
-              <FontAwesomeIcon icon={faFill} />
-              Bucket List
-            </div>
-            <div
-              class="sidebar-item"
-              onClick={() => {
-                handleWebpageStateChange();
-              }}
-              style={{
-                color: state.currentState ? "#FFC856" : "white",
-              }}
-            >
-              <FontAwesomeIcon icon={faList} />
-              Todo List
-            </div>
-            <div class="sidebar-item">
-              <FontAwesomeIcon icon={faUserFriends} />
-              Friends
-            </div>
-            <div class="sidebar-item">
-              <FontAwesomeIcon icon={faCog} />
-              Settings
-            </div>
-            <div class="sidebar-item">
-              <FontAwesomeIcon icon={faSignOutAlt} />
-              Sign-Out
-            </div>
-            <div class="sidebar-bottom">
-              <img src="/circle-cropped.png" />
+            <div class="content">
+              <input
+                type="text"
+                class="form-control searchBar"
+                onChange={handleSearchChange}
+                placeholder="Search..."
+              ></input>
+              <ListContainer state={state} deleteItem={searchListItems} />
             </div>
           </div>
-          <div class="content">
-            <input
-              type="text"
-              class="form-control searchBar"
-              onChange={handleSearchChange}
-              placeholder="Search..."
-            ></input>
-            <ListContainer state={state} deleteItem={searchListItems} />
-          </div>
-        </div>
-      </body>
-    </html>
+        </body>
+      </html>
+    </Route>
   );
 }
 
