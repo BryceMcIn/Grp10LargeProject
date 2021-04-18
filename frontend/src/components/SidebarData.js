@@ -17,7 +17,7 @@ export const SidebarData = [
     cName: "nav-text",
   },
   {
-    title: "Update Name",
+    title: "Update Username",
     path: "/name",
     icon: <IoIcons.IoMdPerson />,
     cName: "nav-text",

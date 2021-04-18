@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import './home.css';
-import { withRouter } from 'react-router-dom';
+import { Route, withRouter, Link, Switch, useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFill } from '@fortawesome/free-solid-svg-icons'
 import { faList } from '@fortawesome/free-solid-svg-icons'
@@ -9,7 +9,8 @@ import { faUserFriends } from '@fortawesome/free-solid-svg-icons'
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { faCheckSquare, faSquare, faTrash, faYenSign } from '@fortawesome/free-solid-svg-icons';
-
+import friends from "../Friends";
+import navbar from "../Navbar";
 
 function Home(props){
 
@@ -27,7 +28,7 @@ function Home(props){
         return (
             props.state.currentListItems.map((item, index) => {
                 return (
-                    <div class="list-item">
+                    <div class="list-item-Home">
                         <div class="type">
                             {listItemState}
                         </div>
@@ -112,6 +113,13 @@ function Home(props){
     currentAddState: 0
   })
 
+  const history = useHistory();
+  function logOut() {
+    localStorage.clear();
+    history.push("/login");
+    console.log(localStorage);
+  }
+
   const jwt = require('jsonwebtoken');
   var storage = require('../../tokenStorage.js');
 
@@ -150,7 +158,7 @@ function Home(props){
   const searchListItems = async () => {
     if(state.currentState == 0){
       const payload = {userId:localUserID, search:state.searchQuery};
-      axios.post('/api/search-bucket', payload).then(res =>{
+      axios.post('https://letsbuckit.herokuapp.com/api/search-bucket', payload).then(res =>{
         setState(prevState => ({
           ...prevState,
           currentListItems: res.data.results
@@ -245,6 +253,7 @@ function Home(props){
   }
 
   return(
+    <Route>
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
@@ -298,28 +307,45 @@ function Home(props){
       Todo List
     </div>
     <div class="sidebar-item">
-      <FontAwesomeIcon icon={faUserFriends}/>
-      Friends
-    </div>
-    <div class="sidebar-item">
-      <FontAwesomeIcon icon={faCog}/>
-      Settings
-    </div>
-    <div class="sidebar-item">
-      <FontAwesomeIcon icon={faSignOutAlt}/>
-      Sign-Out
-    </div>
+                <FontAwesomeIcon icon={faUserFriends} />
+                <Link target={"_blank"} to="/friends">
+                  <span className="linktext"> Friends</span>
+                </Link>
+                <Switch>
+                  <Route path="/friends" component={friends} exact={true} />
+                </Switch>
+              </div>
+
+              <div class="sidebar-item">
+                <FontAwesomeIcon icon={faCog} />
+                <Link target={"_blank"} to="/navbar">
+                  <span className="linktext">Settings</span>
+                </Link>
+                <Switch>
+                  <Route path="/navbar" component={navbar} exact={true} />
+                </Switch>
+              </div>
+              <div class="sidebar-item">
+                <FontAwesomeIcon
+                  onClick={() => {
+                    logOut();
+                  }}
+                  icon={faSignOutAlt}
+                />
+                Sign-Out
+              </div>
     <div class="sidebar-bottom">
       [insert graphic]Bucket List
     </div>
   </div>
   <div class="content">
-    <input type="text" class="form-control searchBar" onChange={handleSearchChange} placeholder="Search..."></input>
+    <input type="text" class="form-control searchBarHome" onChange={handleSearchChange} placeholder="Search..."></input>
     <ListContainer state={state} deleteItem={searchListItems}/>
   </div>
 </div>
       </body>
     </html>
+    </Route>
   )
 }
 

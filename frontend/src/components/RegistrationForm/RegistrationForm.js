@@ -54,10 +54,6 @@ function RegistrationForm(props) {
     }
 
     // this is to redirect the props to different pages
-    const redirectToHome = () => {
-        props.updateTitle('Home')
-        props.history.push('/home');
-    }
     const redirectToLogin = () => {
         props.updateTitle('Login')
         props.history.push('/login'); 
@@ -71,95 +67,29 @@ function RegistrationForm(props) {
         }
     }
     return(
-        <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
-            <form>
 
-                {/* This is for the First Name */}
-            <div className="form-group text-left">
-                    <label htmlFor="firstName">First Name</label>
-                    <input type="text" 
-                        className="form-control" 
-                        id="firstName" 
-                        placeholder="First Name"
-                        value={state.firstName}
-                        onChange={handleChange} 
-                    />
-                </div>
 
-                {/* This is for the Last Name */}  
-                <div className="form-group text-left">
-                    <label htmlFor="lastName">First Name</label>
-                    <input type="text" 
-                        className="form-control" 
-                        id="lastName" 
-                        placeholder="Last Name"
-                        value={state.lastName}
-                        onChange={handleChange} 
-                    />
-                </div>
-                     {/* This is for the username */}  
-                     <div className="form-group text-left">
-                    <label htmlFor="username">Username</label>
-                    <input type="text" 
-                        className="form-control" 
-                        id="username" 
-                        placeholder="Username"
-                        value={state.username}
-                        onChange={handleChange} 
-                    />
-                </div>
-                {/* This is for the Email */}  
-                <div className="form-group text-left">
-                <label htmlFor="exampleInputEmail1">Email address</label>
-                <input type="email" 
-                       className="form-control" 
-                       id="email" 
-                       aria-describedby="emailHelp" 
-                       placeholder="Enter email" 
-                       value={state.email}
-                       onChange={handleChange}
-                />
-                <small id="emailHelp" className="form-text text-white">Check email for confirmation.</small>
-                </div>
-                 {/* This is for the password */}  
-                <div className="form-group text-left">
-                    <label htmlFor="exampleInputPassword1">Password</label>
-                    <input type="password" 
-                        className="form-control" 
-                        id="password" 
-                        placeholder="Password"
-                        value={state.password}
-                        onChange={handleChange} 
-                    />
-                </div>
-                 {/* This is for the confirm password */}  
-                <div className="form-group text-left">
-                    <label htmlFor="exampleInputPassword1">Confirm Password</label>
-                    <input type="password" 
-                        className="form-control" 
-                        id="confirmPassword" 
-                        placeholder="Confirm Password"
-                        value={state.confirmPassword}
-                        onChange={handleChange} 
-                    />
-                </div>
-                 {/* Submit button */}  
-                <button 
-                    type="submit" 
-                    className="btn btn-warning"
-                    onClick={handleSubmitClick}
-                >
-                    Register
-                </button>
-            </form>
-            <div className="alert alert-success mt-2" style={{display: state.successMessage ? 'block' : 'none' }} role="alert">
-                {state.successMessage}
-            </div>
-            <div className="mt-2">
-                <span>Already have an account? </span>
-                <span className="loginText" onClick={() => redirectToLogin()}>Login here</span> 
-            </div>
-            
+
+        <div class="registerContainer">
+                  <link rel="preconnect" href="https://fonts.gstatic.com"></link>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet"></link>
+        <div class="registerTitle">
+                Registration
+        </div>
+        <input class="formItemHalf" type="text" id="firstName" value={state.firstName}
+                        onChange={handleChange}  placeholder="First"></input>
+        <input class="formItemHalf" id="lastName" value={state.lastName}
+                        onChange={handleChange} type="text" placeholder="Last"></input>
+        <input class="formItem " id="email" value={state.email}
+                        onChange={handleChange} type="email" placeholder="Email"></input>
+        <input class="formItem" id="username" value={state.username}
+                        onChange={handleChange} type="text" placeholder="Username"></input>
+        <input class="formItem" id="password" value={state.password}
+                        onChange={handleChange}  type="password" placeholder="Password"></input>
+        <input class="formItem" id="confirmPassword" value={state.confirmPassword}
+                        onChange={handleChange} type="password" placeholder="Re-Type Password"></input>
+        <button type="button" onClick={handleSubmitClick} class="btn registerButton">Register</button>
+        <div class="links" onClick={() => redirectToLogin()}>Already have an account? Click here!</div>
         </div>
     )
 }

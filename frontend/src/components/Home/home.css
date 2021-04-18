@@ -123,7 +123,7 @@ html body{
   width:100%;
   position:absolute;
 }
-.searchBar{
+.searchBarHome{
   color:white;
   font-family:Montserrat;
   width:50%;
@@ -137,11 +137,11 @@ html body{
   border-radius: 15px;
   box-shadow:         0px 3px 2px -1px #1D2D50;
 }
-.searchBar::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+.searchBarHome::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   font-family: Montserrat;
   opacity: 1; /* Firefox */
 }
-.list-item {
+.list-item-Home{
   text-align:center;
   background-color:#285377;
   width:70%;

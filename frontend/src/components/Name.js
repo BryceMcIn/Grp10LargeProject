@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import navbar from "./Navbar.js";
+import { Route, withRouter, Link, Switch } from "react-router-dom";
 import { API_BASE_URL, ACCESS_TOKEN_NAME } from "../constants/apiConstants.js";
 
 import "./Email.css";
-
+// this is to change the login username
 function Name(props) {
   // local details
   const [state, setState] = useState({
-    oldName: "",
-    newName: "",
-    confirmPassword: "",
+    login: "",
+    newLogin: "",
+    password: "",
     successMessage: null,
   });
   const handleChange = (e) => {
@@ -19,17 +21,25 @@ function Name(props) {
       [id]: value,
     }));
   };
+  const jwt = require("jsonwebtoken");
+  var storage = require("../tokenStorage.js");
+
+  var tok = storage.retrieveToken();
+  var ud = jwt.decode(tok, { json: true });
+
+  var localUserID = ud.userID;
 
   const handleSubmitClick = (e) => {
     e.preventDefault();
     const payload = {
       //needs to be changed to email maybe.
-      oldName: state.oldName,
-      newName: state.newName,
-      confirmPassword: state.confirmPassword,
+      userID: localUserID,
+      login: state.login,
+      newLogin: state.newLogin,
+      password: state.password,
     };
     axios
-      .post(API_BASE_URL + "/api/login", payload)
+      .post("https://letsbuckit.herokuapp.com/api/change-login", payload)
       .then(function (response) {
         if (response.status === 200) {
           setState((prevState) => ({
@@ -62,24 +72,24 @@ function Name(props) {
         <div class="grid-item">
           <form onSubmit={submitHandler}>
             <div className="form-inner">
-              <h2>Update Name</h2>
+              <h2>Update Login</h2>
               <div class="form-group">
-                <label htmlFor="newEmail">New Name</label>
+                <label htmlFor="login">Login</label>
                 <input
                   type="text"
-                  name="newName"
-                  id="newName"
-                  value={state.newName}
+                  name="login"
+                  id="login"
+                  value={state.login}
                   onChange={handleChange}
                 />
               </div>
               <div class="form-group">
-                <label htmlFor="oldEmail">Old Name</label>
+                <label htmlFor="oldEmail">New Login</label>
                 <input
                   type="text"
-                  name="oldName"
-                  id="oldName"
-                  value={state.oldName}
+                  name="newLogin"
+                  id="newLogin"
+                  value={state.newLogin}
                   onChange={handleChange}
                 />
               </div>
@@ -90,7 +100,7 @@ function Name(props) {
                   type="password"
                   name="password"
                   id="password"
-                  value={state.email}
+                  value={state.password}
                   onChange={handleChange}
                 />
               </div>
@@ -99,6 +109,14 @@ function Name(props) {
                 value="Save Changes"
                 onClick={handleSubmitClick}
               />
+              <button style={{ marginLeft: 20 }} className="button">
+                <Link to="/navbar">
+                  <span className="linktext2">Back to Settings</span>
+                </Link>
+                <Switch>
+                  <Route path="/navbar" component={navbar} exact={true} />
+                </Switch>
+              </button>
             </div>
           </form>
         </div>

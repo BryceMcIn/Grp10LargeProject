@@ -1,10 +1,73 @@
-.loginText {
-  color: #2895f5;
-  font-weight: bold;
-  cursor: pointer;
+html body{
+  background: #133B5C;
 }
-
-.successMessage {
-  color: green;
-  font-weight: bold;
+.registerContainer{
+  margin: 0 auto;
+  margin-top:50px; 
+  width:40%;
+  background-color: #1E5F74;
+  border-radius:8px;
+  text-align:center;
+  padding-bottom:15px;
+}
+.registerTitle{
+  font-family:Montserrat;
+  font-size:42px;
+  color:white;
+  text-align:center;
+  padding-top:10px;
+}
+.registerFormItem{
+  
+}
+.formItem{
+  color:white;
+  text-align:left;
+  padding-left:30px;
+  font-family:Montserrat;
+  width:72.8%;
+  font-size:20px;
+  margin: 0 auto;
+  height:50px;
+  margin-top:10px;
+  margin-bottom:40px;
+  background-color:#133B5C;
+  border: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
+}
+.formItemHalf {
+  color:white;
+  text-align:left;
+  padding-left:30px;
+  font-family:Montserrat;
+  width:35%;
+  font-size:20px;
+  margin: 0 auto;
+  height:50px;
+  margin-top:30px;
+  margin-right:10px;
+  margin-left:10px;
+  margin-bottom:40px;
+  background-color:#133B5C;
+  border: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
+}
+.registerButton{
+  font-family:Montserrat;
+  font-color:#1D2D50;
+  border-radius:10px;
+  width:50%;
+  margin-top:25px;
+  font-size:20px;
+  background-color:#FFC856;
+  margin: 0 auto;
+  margin-bottom:30px;
+  margin-left:0;
+}
+.links{
+  font-family:Montserrat;
+  color:#133B5C;
+  padding-bottom:10px;
 }

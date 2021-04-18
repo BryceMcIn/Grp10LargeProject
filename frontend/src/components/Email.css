@@ -5,7 +5,17 @@ button {
   border: none;
   outline: none;
 }
-
+.container2 {
+  padding-left: 40px;
+}
+.linktext2 {
+  color: rgba(0, 0, 0, 0.603);
+  font-weight: bold;
+  transition: 0.4s;
+  color: #1d2d50;
+  font-weight: 700;
+  cursor: pointer;
+}
 .App {
   height: 100vh;
   display: flex;
