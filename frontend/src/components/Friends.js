@@ -1,4 +1,4 @@
-import React, { setState, useState } from "react";
+import React, { setState, useState, useEffect } from "react";
 import "./Popup.js";
 import "./Friends.css";
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,17 +11,17 @@ import axios from "axios";
 const useStyles = makeStyles({
   root: {
     minWidth: 150,
-    margin: "0 20px",
+    margin: "0 20px 20px",
     backgroundColor: "#1E5F74",
     color: "#FFFF",
   },
   bullet: {
     display: "inline-block",
-    margin: "0 2px",
+    margin: "0 20px",
     transform: "scale(0.8)",
   },
   title: {
-    fontSize: 14,
+    fontSize: 20,
   },
   pos: {
     marginBottom: 12,
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 
 function Friends() {
   const [buttonPopup, setButtonPopup] = useState(false);
-
+  const [friendReq, setFriend] = useState([]);
   //function to get the friends data
   const getFriends = () => {
     //get is getting every response by the endpoint
@@ -41,8 +41,14 @@ function Friends() {
         responseList = [];
         var responseList = response.data.results;
         console.log(responseList);
+        setFriend(responseList);
       });
   };
+
+  useEffect(() => {
+    getFriends();
+  }, []);
+
   const jwt = require("jsonwebtoken");
   var storage = require("../tokenStorage.js");
 
@@ -64,63 +70,25 @@ function Friends() {
         class="form-control searchBar"
         placeholder="Search Friends..."
       ></input>
-      <Grid container spacing={1}>
-        <Grid Item spacing={3}>
+
+      {friendReq.map((item) => {
+        return (
           <Card className={classes.root}>
             <CardContent>
               <Typography
                 className={classes.title}
                 color="textSecondary"
                 gutterBottom
-              >
-                Added Friend
-              </Typography>
+              ></Typography>
               <Typography variant="h5" component="h2"></Typography>
               <Typography variant="body2" component="p">
-                John's dream is to see Japan
+                {item}
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-        <Grid Item spacing={3}>
-          <Card className={classes.root}>
-            <CardContent>
-              <Typography
-                className={classes.title}
-                color="textSecondary"
-                gutterBottom
-              >
-                Added Friend
-              </Typography>
-              <Typography variant="h5" component="h2">
-                Timmy Turner
-              </Typography>
-              <Typography variant="body2" component="p">
-                Timmy wants to visit the zoo
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid Item spacing={3}>
-          <Card className={classes.root}>
-            <CardContent>
-              <Typography
-                className={classes.title}
-                color="textSecondary"
-                gutterBottom
-              >
-                Added Friend
-              </Typography>
-              <Typography variant="h5" component="h2">
-                Jim Jones
-              </Typography>
-              <Typography variant="body2" component="p">
-                Jim wants to visit the store
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        );
+      })}
+
       <button className="button" onClick={() => setButtonPopup(true)}>
         Add new Friend
       </button>
