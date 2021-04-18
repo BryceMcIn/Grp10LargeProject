@@ -64,7 +64,7 @@ function Name(props) {
     e.preventDefault();
 
     // passes through the form details we have set via props
-    Email(details);
+    Name(details);
   };
   return (
     <div className="grid-container">

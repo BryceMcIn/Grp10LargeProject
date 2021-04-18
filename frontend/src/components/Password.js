@@ -62,7 +62,7 @@ function Password(props) {
     e.preventDefault();
 
     // passes through the form details we have set via props
-    Email(details);
+    Password(details);
   };
   return (
     <div className="grid-container">
