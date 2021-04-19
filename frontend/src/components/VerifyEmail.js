@@ -10,12 +10,8 @@ const VerifyEmail = function (props) {
         statusMessage:''
     });
 
-
-
-
     useEffect( ()=>{
 
-    console.log(props.location.search);
     const parsedInput = props.location.search.substring(1).replaceAll('%22','"').replaceAll('%3A',':').replaceAll('%7D',"}").replaceAll('%7B','{');
     const myPackage = JSON.parse(parsedInput)
     console.log(myPackage);
@@ -38,11 +34,12 @@ const VerifyEmail = function (props) {
         console.log(err);
     })
     },[])
+
     return (
         <div class="emailContainer">
         <link rel="preconnect" href="https://fonts.gstatic.com"></link>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet"></link>
-            <button class="returnLoginButton">Return to Login</button>
+            <button class="returnLoginButton" onClick={()=>{history.push('/login')}}>Return to Login</button>
             <div class="emailBody">
                 <div class="emailTitle">Email Verification</div>
                 <div class="fieldCaption">If something happened, it will show up here:</div>
