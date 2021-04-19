@@ -49,6 +49,7 @@ function Home(props) {
                         return;
                       }
                       console.log('list item completed success');
+                      props.deleteItem()
                     } else {
                       const payload = { ID: item._id };
                       const response = await axios.post('/api/edit-todo', payload);
