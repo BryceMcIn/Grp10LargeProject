@@ -60,9 +60,9 @@ function App() {
           <Route path="/password-reset">
             <RecoverPassword />
           </Route>
-          <PrivateRoute path="/navbar">
+          <Route path="/navbar">
             <Navbar />
-          </PrivateRoute>
+          </Route>
           </Switch>
           <AlertComponent errorMessage={errorMessage} hideError={updateErrorMessage}/>
     </div>

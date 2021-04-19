@@ -188,7 +188,7 @@ function Home(props) {
 
 
   //load all list items [ADD TODO]
-  const getAllListItems = async () => {//YUCK! SUCKS BIG OL PEENIE
+  const getAllListItems = async () => {
     const payload = { userID: localUserID };
     const response = await axios.post('/api/all-buckets', payload);
     if (response.status == 500) {
@@ -334,7 +334,7 @@ function Home(props) {
                 Sign-Out
               </div>
               <div class="sidebar-bottom">
-                [insert graphic]Bucket List
+                <img src='https://raw.githubusercontent.com/BryceMcIn/Grp10LargeProject/main/frontend/public/circle-cropped.png' alt="image"></img>
     </div>
             </div>
             <div class="content">

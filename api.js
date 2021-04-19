@@ -819,7 +819,7 @@ app.post('/api/change-email', async (req, res, next) =>
     {
         error = "Invalid email/password combination"
         var ret = { error: error };      
-        res.status(500).json(ret);
+        res.status(204).json(ret);
     }
     id = results[0]._id;
     var fn = results[0].firstName;  
@@ -835,7 +835,7 @@ app.post('/api/change-email', async (req, res, next) =>
         db.collection('Users').updateOne(myquery, newvalues);
         
         var ret = { error: error };      
-    res.status(200).json(ret);
+        res.status(200).json(ret);
     } catch (er)
     {
         error = er.toString();

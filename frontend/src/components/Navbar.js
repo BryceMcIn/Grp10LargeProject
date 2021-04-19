@@ -3,47 +3,23 @@ import "./Navbar.css";
 
 import * as FaIcons from "react-icons/fa";
 import { SidebarData } from "./SidebarData";
-import { Route, withRouter, Link, Switch } from "react-router-dom";
-import home from "./Home/Home.js";
+import { Route, withRouter, Link, Switch, useHistory} from "react-router-dom";
 
-function clickMe() {
-  alert("This will take back to main");
-}
+
 function Navbar() {
+
+  let history = useHistory();
+
   return (
-    <Route>
-      <>
-        <div className="navbar">
-          <Link to="#" className="menu-bars"></Link>
-        </div>
-        <nav className="nav-menu active">
-          <ul className="nav-menu-items">
-            <ul className="navbar-toggle">
-              <h1 style={{ marginRight: 100 }}>Settings</h1>
-              <Link to="#" className="menu-bars" />
-            </ul>
-            {SidebarData.map((item, index) => {
-              return (
-                <li key={index} className={item.cName}>
-                  <Link to={item.path}>
-                    {item.icon}
-                    <span>{item.title}</span>
-                  </Link>
-                </li>
-              );
-            })}
-            <button style={{ marginLeft: -75 }} className="button">
-              <Link to="/home">
-                <span className="linktext2"> Back to Home</span>
-              </Link>
-              <Switch>
-                <Route path="/home" component={home} exact={true} />
-              </Switch>
-            </button>
-          </ul>
-        </nav>
-      </>
-    </Route>
+    <div class="registerContainer">
+   <link rel="preconnect" href="https://fonts.gstatic.com"></link>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet"></link>
+<div class="registerTitle">Settings</div>
+  <button class="btn settingsButton" onClick={()=>{history.push('/name')}}>Change Username</button>
+  <button class="btn settingsButton" onClick={()=>{history.push('/password')}}>Change Password</button>
+  <button class="btn settingsButton" onClick={()=>{history.push('/email')}}>Update Email</button>
+  <button class="btn registerButton" onClick={()=>{history.push('/home')}}>Back to Home</button>
+</div>
   );
 }
 

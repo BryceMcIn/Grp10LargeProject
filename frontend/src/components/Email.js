@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN_NAME } from "../constants/apiConstants.js";
 import navbar from "./Navbar.js";
-import { Route, withRouter, Link, Switch } from "react-router-dom";
+import { Route, withRouter, Link, Switch, useHistory } from "react-router-dom";
 import "./Email.css";
 
 function Email(props) {
@@ -12,6 +12,8 @@ function Email(props) {
     newEmail: "",
     password: "",
     successMessage: null,
+    stateError:false,
+    message:''
   });
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -43,13 +45,15 @@ function Email(props) {
         if (response.status === 200) {
           setState((prevState) => ({
             ...prevState,
-            successMessage: "Update successful. Redirecting to settings page..",
+            stateError:false,
+            message:"Email change successful"
           }));
-          localStorage.setItem(ACCESS_TOKEN_NAME, response.data.token);
-          redirectToHome();
-          props.showError(null);
-        } else if (response.code === 204) {
-          props.showError("Password Incorrect");
+        } else if (response.status == 204 || response.code == 500) {
+          setState((prevState) => ({
+            ...prevState,
+            stateError:true,
+            message:"Email change unsuccessful. Check password"
+          }));
         }
       })
       .catch(function (error) {
@@ -65,68 +69,21 @@ function Email(props) {
     // passes through the form details we have set via props
     Email(details);
   };
+
+  let history=useHistory();
+
   return (
-    <Route>
-      <div className="container2">
-        <div className="grid-container">
-          <div className="grid-item">
-            <div class="grid-item">
-              <form onSubmit={submitHandler}>
-                <div className="form-inner">
-                  <h2>Update Email</h2>
-                  <div class="form-group">
-                    <label htmlFor="newEmail"> Email </label>
-                    <input
-                      type="text"
-                      name="email"
-                      id="email"
-                      value={state.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label htmlFor="oldEmail">New Email</label>
-                    <input
-                      type="text"
-                      name="newEmail"
-                      id="newEmail"
-                      value={state.newEmail}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <h3>To verify your identity, please enter your password</h3>
-                  <div class="form-group">
-                    <label htmlFor="password">Password </label>
-                    <input
-                      type="password"
-                      name="password"
-                      id="password"
-                      value={state.password}
-                      onChange={handleChange}
-                    />
-                  </div>
-
-                  <input
-                    type="submit"
-                    value="Save Changes"
-                    onClick={handleSubmitClick}
-                  />
-
-                  <button style={{ marginLeft: 20 }} className="button">
-                    <Link to="/navbar">
-                      <span className="linktext2">Back to Settings</span>
-                    </Link>
-                    <Switch>
-                      <Route path="/navbar" component={navbar} exact={true} />
-                    </Switch>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Route>
+    <div class="registerContainer">
+      <link rel="preconnect" href="https://fonts.gstatic.com"></link>
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet"></link>
+      <div class="registerTitle">Change Email</div>
+      <input class="form-control formItem" id="email" onChange={handleChange} value={state.login} placeholder="Old Email"></input>
+      <input class="form-control formItem" id="newEmail" onChange={handleChange} value={state.newLogin} placeholder="New Email"></input>
+      <input class="form-control formItem" type="password" id="password" onChange={handleChange} value={state.password} placeholder="Password"></input>
+      <div class="links" onClick={() => { history.push('/home') }}>Back To Home</div>
+      <button class="btn registerButton" onClick={handleSubmitClick}>Change Email</button>
+      <div class="links" style={{ color: state.successState ? '#7b0000' : "#77dd77" }}>{state.message}</div>
+    </div>
   );
 }
 

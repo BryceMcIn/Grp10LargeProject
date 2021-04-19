@@ -1,49 +1,174 @@
-.nav-menu {
-  background-color: #1d2d50;
-  width: 450px;
-
-  display: flex;
-  justify-content: center;
-  position: fixed;
-  top: 200px;
-  left: 600px;
-  border-radius: 10px;
+html body{
+  background: #133B5C;
 }
-
-.nav-text {
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  padding: 8px 10px 8px 0px;
-  list-style-type: none;
-  height: 80px;
-  margin-left: 30px;
+.registerContainer{
+  margin: 0 auto;
+  margin-top:50px; 
+  width:40%;
+  background-color: #1E5F74;
+  border-radius:8px;
+  text-align:center;
+  padding-bottom:15px;
+  order: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 6px 2px -1px #1D2D50;
 }
-
-.nav-text a {
-  text-decoration: none;
-  color: azure;
-  font-size: 18px;
-  width: 95%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  border-radius: 4px;
+.fieldCaption{
+  font-family:Montserrat;
+  font-size:16px;
+  color:white;
+  text-align:left;
+  text-align: center;
+  margin-top:-30px;
+  padding-bottom:10px;
 }
-.nav-text a:hover {
-  background-color: #1c7ce9;
+.registerTitle{
+  font-family:Montserrat;
+  font-size:42px;
+  color:white;
+  text-align:center;
+  padding-top:10px;
+  padding-bottom:30px;
 }
-
-.nav-menu-items {
-  width: 80%;
+.registerFormItem{
+  
 }
-.setting {
-  font-size: 30px;
+.formItem{
+  color:white;
+  text-align:left;
+  padding-left:30px;
+  font-family:Montserrat;
+  width:72.8%;
+  font-size:20px;
+  margin: 0 auto;
+  height:50px;
+  margin-top:10px;
+  margin-bottom:40px;
+  background-color:#133B5C;
+  border: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
 }
-.button {
-  background-color: #ffc856;
-  color: #1d2d50;
-  border-radius: 5px;
-  height: 26x;
+.formItemHalf {
+  color:white;
+  text-align:left;
+  padding-left:30px;
+  font-family:Montserrat;
+  width:35%;
+  font-size:20px;
+  margin: 0 auto;
+  height:50px;
+  margin-top:30px;
+  margin-right:10px;
+  margin-left:10px;
+  margin-bottom:40px;
+  background-color:#133B5C;
+  border: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
+}
+.returnHomeButton{
+  font-family:Montserrat;
+  position:absolute;
+  font-color:#1D2D50;
+  border-radius:10px;
+  width:200px;
+  font-size:20px;
+  left:0;
+  top:0;
+  margin-left:50px;
+  margin-top:50px;
+  background-color:#FFC856;
+  order: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
+}
+.addFriendButton{
+  margin:0 auto;
+  margin-left:0;
+  font-family:Montserrat;
+  font-color:#1D2D50;
+  border-radius:10px;
+  width:200px;
+  height:50px;
+  font-size:20px;
+  background-color:#FFC856;
+  order: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
+}
+.registerButton{
+  font-family:Montserrat;
+  font-color:#1D2D50;
+  border-radius:10px;
+  width:50%;
+  margin-top:25px;
+  font-size:20px;
+  background-color:#FFC856;
+  margin: 0 auto;
+  margin-bottom:30px;
+  margin-left:0;
+  order: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
+}
+.links{
+  font-family:Montserrat;
+  color:#133B5C;
+  padding-bottom:10px;
+}
+.addFriendContainer{
+  display:flex;
+  flex-flow: row wrap;
+  width:100%;
+  align-items:center;
+  float:none;
+  margin-right:0 auto;
+}
+.searchBarHome::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  font-family: Montserrat;
+  opacity: 1; /* Firefox */
+}
+.friendContainer{
+  position:relative;
+  height:100vh;
+  padding:10px;
+  text-align:center;
+}
+.friendBoxContainer{
+  margin:0 auto;
+  text-align:center;
+  width:50%;
+}
+.friendBox{
+  margin-left:10px;
+  margin-bottom:25px;
+  margin-right:10px;
+  font-family:Montserrat;
+  font-size:30px;
+  color:white;
+  padding-left:70px;
+  padding-right:70px;
+  background-color:#285377;
+  border: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow:         0px 3px 2px -1px #1D2D50;
+}
+.settingsButton{
+  margin:0 auto;
+  margin-right:50px;
+  margin-left:50px;
+  margin-bottom:25px;
+  background-color:#133B5C;
+  border-radius:10px;
+  padding-top:10px;
+  width:50%;
+  font-family:Montserrat;
+  font-size: 20px;
+  color: #ffffff;
+  text-align:center;
+  padding-bottom:10px;
+  border: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
 }

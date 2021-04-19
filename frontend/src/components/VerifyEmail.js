@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, withRouter, Link, Switch } from "react-router-dom";
+import { Route, withRouter, Link, Switch, useHistory } from "react-router-dom";
 import './VerifyEmail.css';
 import axios from 'axios';
 
@@ -12,8 +12,14 @@ const VerifyEmail = function (props) {
 
     useEffect( ()=>{
 
+    var myPackage = {token:""};
     const parsedInput = props.location.search.substring(1).replaceAll('%22','"').replaceAll('%3A',':').replaceAll('%7D',"}").replaceAll('%7B','{');
-    const myPackage = JSON.parse(parsedInput)
+    try{
+       myPackage = JSON.parse(parsedInput);
+    } catch(err){
+        console.log(err)
+        myPackage = {token:""};
+    }
     console.log(myPackage);
 
     axios
@@ -34,6 +40,8 @@ const VerifyEmail = function (props) {
         console.log(err);
     })
     },[])
+
+    let history = useHistory();
 
     return (
         <div class="emailContainer">
