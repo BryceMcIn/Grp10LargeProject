@@ -29,14 +29,15 @@ exports.setApp = function( app, client)
             em = results[0].email;
             ver = results[0].isVerified;
             emTok = results[0].emailTok
-            /* if (!ver)
+            if (!ver)
             {
                 error = "Account not verified"
                 var ret = {error:error};
-                res.status(200).json(ret);
+                res.status(204).json(ret);
+                console.log(error);
                 return;
             }
-            */ 
+             
             try{
                 myToken = jwt.createToken(fn,ln,id);
             }
@@ -49,6 +50,7 @@ exports.setApp = function( app, client)
         else 
         {
             var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
+            console.log("Invalid Credentials");
             res.status(204).json(ret);
         }   
     });

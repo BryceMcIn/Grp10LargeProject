@@ -1,7 +1,10 @@
+import { faDrumstickBite } from "@fortawesome/free-solid-svg-icons";
 import { JsonWebTokenError } from "jsonwebtoken";
 import React, { useEffect, useState } from "react";
 import { Route, withRouter, Link, Switch } from "react-router-dom";
 import './VerifyEmail.css';
+import axios from 'axios';
+import { response } from "express";
 
 
 const VerifyEmail = function (props) {
@@ -11,9 +14,25 @@ const VerifyEmail = function (props) {
     });
 
     const myPackage = JSON.parse(props.location.search.substring(1).replaceAll('%22','"'))
-    console.log(myPackage)
 
-    
+    axios
+    .post("https://letsbuckit.herokuapp.com/api/verify-email", myPackage)
+    .then(function(response){
+        if(response.status==200){
+            setState({
+                statusMessage:'Email verified sucessfully'
+            })
+        }
+        else{
+            setState({
+                statusMessage:'Email not verified'
+            })
+        }
+    })
+    .catch(err=>{
+        console.log(err);
+    })
+
     return (
         <div class="emailContainer">
         <link rel="preconnect" href="https://fonts.gstatic.com"></link>
@@ -22,7 +41,7 @@ const VerifyEmail = function (props) {
             <div class="emailBody">
                 <div class="emailTitle">Email Verification</div>
                 <div class="fieldCaption">If something happened, it will show up here:</div>
-                <div class="emailStatus">Email set.</div>
+                <div class="emailStatus">{state.statusMessage}</div>
             </div>
         </div>
     )
