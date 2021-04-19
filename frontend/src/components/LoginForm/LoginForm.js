@@ -1,50 +1,57 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './LoginForm.css';
-import {API_BASE_URL, ACCESS_TOKEN_NAME} from '../../constants/apiConstants';
-import { withRouter, Link } from "react-router-dom";
+import { withRouter, Link, useHistory } from "react-router-dom";
 
 function LoginForm(props) {
 
+    let history = useHistory();
+
     const storage = require('../../tokenStorage.js');
-    const [state , setState] = useState({
-        email : "",
-        password : "",
-        successMessage: null
+    const [state, setState] = useState({
+        login: "",
+        password: "",
+        successMessage: null,
+        sucessState: false
     })
     const handleChange = (e) => {
-        const {id , value} = e.target   
+        const { id, value } = e.target
         setState(prevState => ({
             ...prevState,
-            [id] : value
+            [id]: value
         }))
     }
 
     const handleSubmitClick = (e) => {
         e.preventDefault();
-        const payload={
+        const payload = {
             //needs to be changed to email maybe.
-            "login":state.email,
-            "password":state.password,
+            "login": state.login,
+            "password": state.password,
         }
+
+        console.log(payload)
         axios.post('https://letsbuckit.herokuapp.com/api/login', payload)
             .then(function (response) {
-                if(response.status === 200){
+                if (response.status === 200) {
                     setState(prevState => ({
                         ...prevState,
-                        'successMessage' : 'Login successful. Redirecting to home page..'
+                        'successMessage': 'Login successful. Redirecting to home page..'
                     }))
-                
+
                     var res = response.data;
                     console.log(res);
                     storage.storeToken(res.jwt);
-                    redirectToHome();
-                    props.showError(null)
+                    history.push('/home')
                 }
-                else if(response.status === 204){
-                    props.showError("Username and password do not match");
+                else if (response.status === 204) {
+                    setState(prevState => ({
+                        ...prevState,
+                        successMessage: 'Invalid User/Pass or account unverified',
+                        sucessState: false
+                    }))
                 }
-                else{
+                else {
                     props.showError("Username does not exists");
                 }
             })
@@ -52,57 +59,21 @@ function LoginForm(props) {
                 console.log(error);
             });
     }
-    
-    const redirectToHome = () => {
-        props.updateTitle('Home')
-        props.history.push('/home');
-    }
-    const redirectToRegister = () => {
-        props.history.push('/register'); 
-        props.updateTitle('Register');
-    }
-    return(
-        <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
-            <form>
-                <div className="form-group text-left">
-                <label htmlFor="exampleInputEmail1">Email address</label>
-                <input type="email" 
-                       className="form-control" 
-                       id="email" 
-                       aria-describedby="emailHelp" 
-                       placeholder="Enter email" 
-                       value={state.email}
-                       onChange={handleChange}
-                />
-               
-                </div>
-                <div className="form-group text-left">
-                <label htmlFor="exampleInputPassword1">Password</label>
-                <input type="password" 
-                       className="form-control" 
-                       id="password" 
-                       placeholder="Password"
-                       value={state.password}
-                       onChange={handleChange} 
-                />
-                </div>
-                <div className="form-check">
-                </div>
-                <button 
-                    type="submit" 
-                    className="btn btn-warning"
-                    onClick={handleSubmitClick}
-                >Submit</button>
-            </form>
-            <div className="alert alert-success mt-2" style={{display: state.successMessage ? 'block' : 'none' }} role="alert">
-                {state.successMessage}
+
+    return (
+        <div class="registerContainer">
+             <link rel="preconnect" href="https://fonts.gstatic.com"></link>
+             <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet"></link>
+            <div class="registerTitle">Let's Buck-it!</div>
+            <div>
+            <img class="loginLogo" src="https://raw.githubusercontent.com/BryceMcIn/Grp10LargeProject/frontend/settings/frontend/public/circle-cropped.png" alt="logo"></img>
             </div>
-            <div className="registerMessage">
-                {props.location.state!=undefined ? props.location.state.message : ""}
-                <span>Dont have an account? </span>
-                <span className="loginText" onClick={() => redirectToRegister()}>Register</span> 
-            </div>
-            <Link to="/sendPassword">Reset Password</Link>
+            <input class="formItem" placeholder="Username" id="login" value={state.login} onChange={handleChange} type="text"></input>
+            <input class="formItem" placeholder="Password" id="password" value={state.password} onChange={handleChange}  type="password"></input>
+            <div class="links" onClick={()=>{history.push('/sendPassword')}}>Forgot password?</div>
+            <button class="btn registerButton" onClick={handleSubmitClick}>Login</button>
+            <div class="links" onClick={()=>{history.push('/register')}}>Don't an account? Click here to register!</div>
+            <div class="links" style={{ color: state.successMessage ? '#7b0000' : "#77dd77"}}>{state.successMessage}</div>
         </div>
     )
 }
