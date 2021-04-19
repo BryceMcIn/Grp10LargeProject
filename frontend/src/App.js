@@ -10,10 +10,11 @@ import Navbar from "./components/Navbar";
 import Name from "./components/Name";
 import Password from "./components/Password";
 import Friends from "./components/Friends";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import AlertComponent from "./components/AlertComponent/AlertComponent";
 import SendPass from "./components/SendPass";
 import RecoverPassword from "./components/RecoverPassword";
+import ViewFriend from './components/ViewFriend'
 
 function App() {
   const [title, updateTitle] = useState(null);
@@ -48,6 +49,9 @@ function App() {
           </Route>
           <Route path="/sendPassword">
             <SendPass />
+          </Route>
+          <Route path="/viewFriend">
+            <ViewFriend />
           </Route>
           <Route path="/password-reset">
             <RecoverPassword />
