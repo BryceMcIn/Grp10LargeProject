@@ -156,14 +156,14 @@ html body{
   width:50%;
 }
 .friendBox{
-  margin-left:25px;
+  margin-left:10px;
   margin-bottom:25px;
-  margin-right:25px;
+  margin-right:10px;
   font-family:Montserrat;
   font-size:30px;
   color:white;
-  padding-left:100px;
-  padding-right:100px;
+  padding-left:70px;
+  padding-right:70px;
   background-color:#285377;
   border: 1px solid #1D2D50;
   border-radius: 15px;
