@@ -11,12 +11,15 @@ const VerifyEmail = function (props) {
     });
 
 
+
+
+    useEffect( ()=>{
+
     console.log(props.location.search);
     const parsedInput = props.location.search.substring(1).replaceAll('%22','"').replaceAll('%3A',':').replaceAll('%7D',"}").replaceAll('%7B','{');
     const myPackage = JSON.parse(parsedInput)
     console.log(myPackage);
 
-    useEffect( ()=>{
     axios
     .post("https://letsbuckit.herokuapp.com/api/verify-email", myPackage)
     .then(function(response){
