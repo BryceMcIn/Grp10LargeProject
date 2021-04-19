@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import './LoginForm.css';
 import {API_BASE_URL, ACCESS_TOKEN_NAME} from '../../constants/apiConstants';
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 
 function LoginForm(props) {
 
@@ -52,6 +52,7 @@ function LoginForm(props) {
                 console.log(error);
             });
     }
+    
     const redirectToHome = () => {
         props.updateTitle('Home')
         props.history.push('/home');
@@ -97,9 +98,11 @@ function LoginForm(props) {
                 {state.successMessage}
             </div>
             <div className="registerMessage">
+                {props.location.state!=undefined ? props.location.state.message : ""}
                 <span>Dont have an account? </span>
                 <span className="loginText" onClick={() => redirectToRegister()}>Register</span> 
             </div>
+            <Link to="/sendPassword">Reset Password</Link>
         </div>
     )
 }

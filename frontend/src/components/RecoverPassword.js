@@ -3,13 +3,18 @@ import axios from "axios";
 import { ACCESS_TOKEN_NAME } from "../constants/apiConstants.js";
 
 import "./Email.css";
+import { Redirect } from "react-router";
 
 function RecoverPassword(props) {
   // local details
   const [state, setState] = useState({
-    newPassword: "",
+    token: "",
+    password: "",
+    retypedPassword: "",
     successMessage: null,
+    successState: false
   });
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setState((prevState) => ({
@@ -18,24 +23,35 @@ function RecoverPassword(props) {
     }));
   };
 
-  const handleSubmitClick = (e) => {
-    e.preventDefault();
+  const handleSubmitClick = () => {
     const payload = {
-      newPassword: state.newPassword,
+      token:state.token,
+      newPassword:state.password
     };
+
+    if(state.password != state.retypedPassword){
+      setState((prevState) => ({
+        ...prevState,
+        successMessage: "Passwords do not match!",
+      }))
+      return;
+    }
     axios
       .post("https://letsbuckit.herokuapp.com/api/password-reset", payload)
       .then(function (response) {
         if (response.status === 200) {
           setState((prevState) => ({
             ...prevState,
-            successMessage: "Update successful. Redirecting to settings page..",
-          }));
-          localStorage.setItem(ACCESS_TOKEN_NAME, response.data.token);
-          redirectToHome();
-          props.showError(null);
+            successMessage: "Password Reset Successful",
+            successState : true
+          }))
+          console.log(state.successMessage);
         } else if (response.code === 204) {
-          props.showError("Password Incorrect");
+          setState((prevState) => ({
+            ...prevState,
+            successMessage: "Invalid Token.",
+            successState: false
+          }))
         }
       })
       .catch(function (error) {
@@ -43,42 +59,17 @@ function RecoverPassword(props) {
       });
   };
 
-  // method for submitting the form
-  const submitHandler = (e) => {
-    // prevent the page from reloading
-    e.preventDefault();
-
-    // passes through the form details we have set via props
-    Email(details);
-  };
   return (
-    <div className="grid-container">
-      <div className="grid-item">
-        <div class="grid-item">
-          <form onSubmit={submitHandler}>
-            <div className="form-inner">
-              <h2>New Password</h2>
-              <div class="form-group">
-                <label htmlFor="newPassword"> New Password </label>
-                <input
-                  type="text"
-                  name="newPassword"
-                  id="newPassword"
-                  value={state.newPassword}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <input
-                type="submit"
-                value="Reset Password"
-                onClick={handleSubmitClick}
-              />
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <div class="registerContainer">
+      <link rel="preconnect" href="https://fonts.gstatic.com"></link>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet"></link>
+  <div class="registerTitle">Reset Password</div>
+  <input class="formItem" id="token" type="text" placeholder="Email Token" value={state.emailToken} onChange={handleChange}></input>
+<input class="formItem" id="password" type="password" placeholder="New Password" value={state.emailToken} onChange={handleChange}></input>
+<input class="formItem" id="retypedPassword" type="password" placeholder="Retype New Password" value={state.emailToken} onChange={handleChange}></input>
+<button type="button" class="btn registerButton" value={state.emailToken} onClick={ () =>handleSubmitClick()}>Reset Password</button>
+<div class="links" style={{ color: !state.successState ? '#7b0000' : "green"}}>{state.successMessage}</div>
+</div>
   );
 }
 

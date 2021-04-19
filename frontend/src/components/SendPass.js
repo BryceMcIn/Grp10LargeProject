@@ -25,7 +25,7 @@ function SendPass(props) {
     };
     axios
       .post(
-        "https://letsbuckit.herokuapp.com/api/send-password-recovery",
+        "/api/send-password-recovery",
         payload
       )
       .then(function (response) {

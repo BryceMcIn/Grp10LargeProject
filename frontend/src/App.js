@@ -49,7 +49,7 @@ function App() {
           <Route path="/sendPassword">
             <SendPass />
           </Route>
-          <Route path="/recoverPassword">
+          <Route path="/password-reset">
             <RecoverPassword />
           </Route>
           <PrivateRoute path="/navbar">
