@@ -74,13 +74,13 @@ exports.setApp = function( app, client)
                     Hello!
                     Thank you for signing up for LetsBuckit! 
                     Please copy and paste the following link in your browser to verify your account:
-                    http://${req.headers.host}/api/verify-email?token=${newUser.emailTok} 
+                    https://${req.headers.host}/verify-email/?%7B%22token%22%3A%22${newUser.emailTok}%22%7D
                 `,
                 html: `
                     <h2>Hello!</h2>
                     <p>Thank you for signing up for LetsBuckit!</p>
                     <p>Please click the link below to verify your account:</p>
-                    <a href="http://${req.headers.host}/api/verify-email?token=${newUser.emailTok}">Verify Your Account</a>
+                    <a href="https://${req.headers.host}/verify-email/?%7B%22token%22%3A%22${newUser.emailTok}%22%7D">Verify Your Account</a>
                 `
             }
             try      
@@ -107,10 +107,11 @@ exports.setApp = function( app, client)
             }      
             catch(e)      
             {        
-                error = e.toString();      
+                error = e.toString();     
+                var ret = { error: error };      
+                res.status(500).json(ret); 
             }         
-            var ret = { error: error };      
-            res.status(200).json(ret);
+            
         }
     });
 
@@ -122,8 +123,8 @@ exports.setApp = function( app, client)
         try
         {
            //  const user = await db.collection('Users').findOne({emailTok : req.query.token});
-            const results = await db.collection('Users').find({emailTok:req.query.token}).toArray();
-            var myQuery = {emailTok: req.query.token};
+            const results = await db.collection('Users').find({emailTok:req.body.token}).toArray();
+            var myQuery = {emailTok: req.body.token};
             var newVal = { $set :{emailTok:null, isVerified:true}};
             if (results.length == 0)
             {

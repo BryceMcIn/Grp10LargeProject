@@ -10,8 +10,13 @@ const VerifyEmail = function (props) {
         statusMessage:''
     });
 
-    const myPackage = JSON.parse(props.location.search.substring(1).replaceAll('%22','"'))
 
+    console.log(props.location.search);
+    const parsedInput = props.location.search.substring(1).replaceAll('%22','"').replaceAll('%3A',':').replaceAll('%7D',"}").replaceAll('%7B','{');
+    const myPackage = JSON.parse(parsedInput)
+    console.log(myPackage);
+
+    useEffect( ()=>{
     axios
     .post("https://letsbuckit.herokuapp.com/api/verify-email", myPackage)
     .then(function(response){
@@ -29,7 +34,7 @@ const VerifyEmail = function (props) {
     .catch(err=>{
         console.log(err);
     })
-
+    },[])
     return (
         <div class="emailContainer">
         <link rel="preconnect" href="https://fonts.gstatic.com"></link>
