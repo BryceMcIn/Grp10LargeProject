@@ -175,15 +175,18 @@ exports.setApp = function( app, client)
                     subject: 'LetsBuckit - Password Reset',
                     text:` 
                         Hello! 
-                        Copy and paste the following link in your browser to reset your password:
-                        http://${req.headers.host}/api/password-reset?token=${tok} 
+                        Click the link below and copy/paste the token into the box when propted to reset your password:
+                        http://${req.headers.host}/api/password-reset 
+
+                        TOKEN: ${tok}
+
                         If you did not request this password reset link, please consider changing your password. 
                     `,
                     html: `
                         <h2>Hello!</h2>
-                        <p>Click the link below to reset your password:</p>
-                        <a href="http://${req.headers.host}/api/password-reset?token=${tok}">Verify Your Account</a>
-                    
+                        <p>Click the link below and copy/paste the token into the box when propted to reset your password:</p>
+                        <a href="http://${req.headers.host}/api/password-reset">Reset Your Password</a>
+                        <p>TOKEN: ${tok}</p>
                         <p>If you did not request this password reset link, please consider changing your password.</p>
                         `
                     }
@@ -224,19 +227,19 @@ exports.setApp = function( app, client)
 
     app.post('/api/password-reset', async(req,res,next) =>
     {
-        const { newPassword } = req.body;
+        const { token, newPassword } = req.body;
         var error = '';
         const db = client.db();
         try {
-            const results = await db.collection('Users').find({passwordResetTok:req.query.token}).toArray();
+            const results = await db.collection('Users').find({passwordResetTok:req.body.token}).toArray();
             // console.log(results.length);
             if (results.length > 0)
             {
-                var myQuery = {passwordResetTok:req.query.token};
+                var myQuery = {passwordResetTok:req.body.token};
                 var newVal = {$set:{password:sha256(req.body.newPassword), passwordResetTok:null}};
                 db.collection('Users').updateOne(myQuery,newVal,function(err,res){
                     if (err) throw err;
-                    console.log("Collection Item Updated");
+                    console.log("Collection Item Password Updated");
                 });
                 var ret = {error:error};
                 res.status(200).json(ret);
