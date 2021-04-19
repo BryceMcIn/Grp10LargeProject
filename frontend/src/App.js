@@ -15,6 +15,7 @@ import AlertComponent from "./components/AlertComponent/AlertComponent";
 import SendPass from "./components/SendPass";
 import RecoverPassword from "./components/RecoverPassword";
 import ViewFriend from './components/ViewFriend'
+import VerifyEmail from "./components/VerifyEmail";
 
 function App() {
   const [title, updateTitle] = useState(null);
@@ -52,6 +53,9 @@ function App() {
           </Route>
           <Route path="/viewFriend">
             <ViewFriend />
+          </Route>
+          <Route path="/verify-email">
+            <VerifyEmail/>
           </Route>
           <Route path="/password-reset">
             <RecoverPassword />

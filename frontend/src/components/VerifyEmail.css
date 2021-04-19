@@ -1,0 +1,70 @@
+.returnLoginButton{
+    font-family:Montserrat;
+    position:absolute;
+    font-color:#1D2D50;
+    border-radius:10px;
+    width:200px;
+    font-size:20px;
+    left:0;
+    top:0;
+    margin-left:50px;
+    margin-top:50px;
+    background-color:#FFC856;
+    order: 1px solid #1D2D50;
+    border-radius: 15px;
+    box-shadow: 0px 3px 2px -1px #1D2D50;
+  }
+  .emailContainer{
+    position:relative;
+    height:100vh;
+    padding:10px;
+    text-align:center;
+  }
+  html body{
+    background: #133B5C;
+  }
+  .emailBody{
+    margin: 0 auto;
+    margin-top:50px; 
+    width:40%;
+    background-color: #1E5F74;
+    border-radius:8px;
+    text-align:center;
+    padding-bottom:15px;
+    order: 1px solid #1D2D50;
+    border-radius: 15px;
+    box-shadow: 0px 6px 2px -1px #1D2D50;
+  }
+  .emailTitle{
+    font-family:Montserrat;
+    font-size:42px;
+    color:white;
+    text-align:center;
+    padding-top:10px;
+    padding-bottom:30px;
+  }
+  .fieldCaption{
+    font-family:Montserrat;
+    font-size:16px;
+    color:white;
+    text-align:center;
+  }
+  .emailStatus {
+    margin:0 auto;
+    background-color:#133B5C;
+    border-radius:10px;
+    padding-top:10px;
+    margin-right:30px;
+    margin-left:30px;
+    margin-top:5px;
+    margin-bottom:10px;
+    font-family:Montserrat;
+    font-weight:bold;
+    font-size: 20px;
+    color: #ffffff;
+    text-align:center;
+    padding-bottom:10px;
+    border: 1px solid #1D2D50;
+    border-radius: 15px;
+    box-shadow: 0px 3px 2px -1px #1D2D50;
+  }
