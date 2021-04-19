@@ -21,7 +21,7 @@ exports.setApp = function( app, client)
         var emTok = '';
         var myToken = null;
         
-        if( results.length > 0 )  
+        if( results.length > 0 && results[0].isVerified)  
         {    
             id = results[0]._id;
             fn = results[0].firstName;    
@@ -29,14 +29,6 @@ exports.setApp = function( app, client)
             em = results[0].email;
             ver = results[0].isVerified;
             emTok = results[0].emailTok
-            if (!ver)
-            {
-                error = "Account not verified"
-                var ret = {error:error};
-                res.status(204).json(ret);
-                console.log(error);
-                return;
-            }
              
             try{
                 myToken = jwt.createToken(fn,ln,id);
@@ -50,7 +42,7 @@ exports.setApp = function( app, client)
         else 
         {
             var ret = { id:id, firstName:fn, lastName:ln, email:em, isVerified:ver, emailTok:emTok, error:''};  
-            console.log("Invalid Credentials");
+            // console.log("Invalid Credentials");
             res.status(204).json(ret);
         }   
     });
