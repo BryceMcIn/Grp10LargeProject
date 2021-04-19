@@ -20,6 +20,7 @@ exports.setApp = function( app, client)
         var ver = false; 
         var emTok = '';
         var myToken = null;
+        
         if( results.length > 0 )  
         {    
             id = results[0]._id;
@@ -28,6 +29,14 @@ exports.setApp = function( app, client)
             em = results[0].email;
             ver = results[0].isVerified;
             emTok = results[0].emailTok
+            /* if (!ver)
+            {
+                error = "Account not verified"
+                var ret = {error:error};
+                res.status(200).json(ret);
+                return;
+            }
+            */ 
             try{
                 myToken = jwt.createToken(fn,ln,id);
             }
@@ -176,7 +185,7 @@ exports.setApp = function( app, client)
                     text:` 
                         Hello! 
                         Click the link below and copy/paste the token into the box when propted to reset your password:
-                        http://${req.headers.host}/api/password-reset 
+                        http://${req.headers.host}/password-reset 
 
                         TOKEN: ${tok}
 
@@ -185,7 +194,7 @@ exports.setApp = function( app, client)
                     html: `
                         <h2>Hello!</h2>
                         <p>Click the link below and copy/paste the token into the box when propted to reset your password:</p>
-                        <a href="http://${req.headers.host}/api/password-reset">Reset Your Password</a>
+                        <a href="http://${req.headers.host}/password-reset">Reset Your Password</a>
                         <p>TOKEN: ${tok}</p>
                         <p>If you did not request this password reset link, please consider changing your password.</p>
                         `
@@ -271,10 +280,21 @@ exports.setApp = function( app, client)
         if( results2.length < 1 )  
         { 
             error = "The username specified does not exist."
+            console.log(error);
             var ret = { error: error };      
-            res.status(200).json(ret);
+            res.status(204).json(ret);
+            return;
         }
-        recieverID = results2[0]._id;
+        recieverID = results2[0]._id.toString();
+        
+        if (recieverID === senderID)
+        {
+            error = "Cannot add yourself as a friend";
+            console.log(error);
+            var ret = {error:error};
+            res.status(204).json(ret);
+            return;
+        }
         recieverID = recieverID.toString();
         const newFR = {userID:senderID,friendID:recieverID}; 
 
@@ -283,27 +303,33 @@ exports.setApp = function( app, client)
         if( results.length > 0 )  
         { 
             error = "There is an existing friend request or friendship already."
+            console.log(error);
             var ret = { error: error };      
-            res.status(200).json(ret);
+            res.status(204).json(ret);
+            return;
         }
         else if( results1.length > 0 )  
         { 
             error = "There is an existing friend request or friendship already."
+            console.log(error);
             var ret = { error: error };      
-            res.status(200).json(ret);
+            res.status(204).json(ret);
+            return;
         }
         else
         {
             try      
             {        
                 const db = client.db();        
-                const result = db.collection('Friends').insertOne(newFR);      
+                const result = db.collection('Friends').insertOne(newFR);  
+                console.log('Collection Item Updated');    
             }      
             catch(e)      
             {        
                 error = e.toString();      
             }         
-            var ret = { error: error };      
+            var ret = { error: error };   
+            console.log(error);   
             res.status(200).json(ret);
         }
     });
@@ -402,23 +428,22 @@ exports.setApp = function( app, client)
         // incoming: userId, friendId  // outgoing: error 
         var error = '';  
         const { userId, friendId } = req.body;  
-        const FRemove = {userId:userId,friendId:friendId};
-        const FRemove1 = {userId:friendId,friendId:userId};
+        const FRemove = {userID:userId,friendID:friendId};
+        const FRemove1 = {userID:friendId,friendID:userId};
         const db = client.db();  
-        const results = await db.collection('Friends').find({userId:userId,friendId:friendId}).toArray();
-        const results1 = await db.collection('Friends').find({userId:friendId,friendId:userId}).toArray();
+        const results = await db.collection('Friends').find({userID:userId,friendID:friendId}).toArray();
+        const results1 = await db.collection('Friends').find({userID:friendId,friendID:userId}).toArray();
 
         if( results.length > 0 )  
         {    
 
-            const result = db.collection('Friends').removeOne(FRemove); 
+            const result = db.collection('Friends').remove(FRemove); 
             var ret = { error: error };
             res.status(200).json(ret);
         }
         else if( results1.length > 0 )  
         {    
-
-            const result = db.collection('Friends').removeOne(FRemove1); 
+            const result = db.collection('Friends').remove(FRemove1); 
             var ret = { error: error };
             res.status(200).json(ret);
         }
