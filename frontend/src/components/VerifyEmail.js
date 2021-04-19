@@ -1,10 +1,7 @@
-import { faDrumstickBite } from "@fortawesome/free-solid-svg-icons";
-import { JsonWebTokenError } from "jsonwebtoken";
 import React, { useEffect, useState } from "react";
 import { Route, withRouter, Link, Switch } from "react-router-dom";
 import './VerifyEmail.css';
 import axios from 'axios';
-import { response } from "express";
 
 
 const VerifyEmail = function (props) {
