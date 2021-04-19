@@ -19,6 +19,14 @@
   height: 80px;
   margin-left: 30px;
 }
+.linktext2 {
+  color: rgba(0, 0, 0, 0.603);
+  font-weight: bold;
+  transition: 0.4s;
+  color: #1d2d50;
+  font-weight: 700;
+  cursor: pointer;
+}
 
 .nav-text a {
   text-decoration: none;

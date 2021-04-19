@@ -58,6 +58,7 @@ function Friends() {
       .then((response) => {
         var responseList = response.data.results;
         console.log(responseList);
+        window.location.reload(true);
       });
   };
 
@@ -79,6 +80,11 @@ function Friends() {
   const bull = <span className={classes.bullet}>•</span>;
   return (
     <div className="conatiner">
+      <div className="personalID">
+        Your userID is {localUserID}
+        <br></br>
+        To add a friend ask for their ID
+      </div>
       <input
         type="text"
         class="form-control searchBar"
