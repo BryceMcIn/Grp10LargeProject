@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ACCESS_TOKEN_NAME } from "../constants/apiConstants.js";
 
-import "./Email.css";
+import "./RegistrationForm/RegistrationForm.css";
 import { Redirect } from "react-router";
 
 function RecoverPassword(props) {
@@ -37,7 +37,7 @@ function RecoverPassword(props) {
       return;
     }
     axios
-      .post("https://letsbuckit.herokuapp.com/api/password-reset", payload)
+      .post("/api/password-reset", payload)
       .then(function (response) {
         if (response.status === 200) {
           setState((prevState) => ({

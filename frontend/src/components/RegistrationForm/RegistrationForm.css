@@ -9,6 +9,18 @@ html body{
   border-radius:8px;
   text-align:center;
   padding-bottom:15px;
+  order: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 6px 2px -1px #1D2D50;
+}
+.fieldCaption{
+  font-family:Montserrat;
+  font-size:16px;
+  color:white;
+  text-align:left;
+  text-align: center;
+  margin-top:-30px;
+  padding-bottom:10px;
 }
 .registerTitle{
   font-family:Montserrat;
@@ -16,6 +28,7 @@ html body{
   color:white;
   text-align:center;
   padding-top:10px;
+  padding-bottom:30px;
 }
 .registerFormItem{
   
@@ -65,6 +78,9 @@ html body{
   margin: 0 auto;
   margin-bottom:30px;
   margin-left:0;
+  order: 1px solid #1D2D50;
+  border-radius: 15px;
+  box-shadow: 0px 3px 2px -1px #1D2D50;
 }
 .links{
   font-family:Montserrat;
